@@ -31,6 +31,9 @@ JOIN mdl_quiz_attempts AS quiza
 JOIN mdl_user AS u
   ON quiza.userid = u.id
 
-WHERE quiza.preview = 0 AND q.course = [course.id] AND cm.id = [module.id]
+WHERE quiza.preview = 0 AND 
+      quiza.state = '[attempt.state]' AND   # vybírá se vždy jen jeden stav, příp. lze udělat přes IN jako níže pro výběr více stavů
+      q.course IN ([course.id]) AND 
+	  cm.id IN ([module.id])
 
 ORDER BY quiza.userid, quiza.attempt;
