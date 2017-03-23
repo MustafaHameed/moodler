@@ -10,7 +10,6 @@ SELECT
 		WHERE cc.id = c.category) AS 'course.categoryid',
   (SELECT cc.name FROM mdl_course_categories AS cc
 		WHERE cc.id = c.category) AS 'course.categoryname'
-        # Napadlo mně, jestli zde třeba nemůže být užitečná i kategorie, kdyžtak lze vyhodit...
 
 FROM [prefix]course AS c;
 
