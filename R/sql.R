@@ -31,7 +31,7 @@ insert_values = function(query, fields, prefix, ...) {
   for (this_name in names(dots))
     query = gsub(
       pattern = paste0("\\[", this_name, "\\]"),
-      replacement = dots[[this_name]],
+      replacement = paste(dots[[this_name]], collapse = ","),
       x = query)
 
   query
