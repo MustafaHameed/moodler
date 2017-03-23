@@ -45,4 +45,4 @@ FROM [prefix]quiz AS q
 JOIN [prefix]course_modules AS cm
   ON q.course = cm.course AND q.id = cm.instance
 
-WHERE cm.id = [module.id];
+WHERE cm.id IN ([module.id]);

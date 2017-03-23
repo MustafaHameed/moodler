@@ -29,4 +29,4 @@ JOIN [prefix]quiz_slots AS qs
 JOIN [prefix]question AS que
   ON que.id = qs.questionid
 
-WHERE cm.id = [module.id];
+WHERE cm.id IN ([module.id]);
