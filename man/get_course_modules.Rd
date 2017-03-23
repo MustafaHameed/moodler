@@ -14,6 +14,8 @@ get_course_modules(conn, course.id, module.names = TRUE, module.type = NULL,
 
 \item{module.names}{Should module names be also fetched (slower)? Defaults to \code{TRUE}}
 
+\item{module.type}{What modules should be listed? By default, all are fetched}
+
 \item{prefix}{Database table prefix, defaults to \code{"mdl_"}}
 }
 \description{

@@ -20,6 +20,7 @@ get_courses = function(conn, prefix = "mdl_") {
 #' @param conn DB connection
 #' @param course.id Vector of course IDs
 #' @param module.names Should module names be also fetched (slower)? Defaults to \code{TRUE}
+#' @param module.type What modules should be listed? By default, all are fetched
 #' @param prefix Database table prefix, defaults to \code{"mdl_"}
 #' @importFrom DBI dbGetQuery
 #' @export
