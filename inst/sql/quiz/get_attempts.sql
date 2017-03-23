@@ -23,17 +23,16 @@ SELECT
   quiza.layout AS 'attempt.layout',
   quiza.sumgrades AS 'attempt.points'
 
-FROM mdl_quiz AS q
-JOIN mdl_course_modules AS cm
+FROM [prefix]quiz AS q
+JOIN [prefix]course_modules AS cm
   ON q.course = cm.course AND q.id = cm.instance
-JOIN mdl_quiz_attempts AS quiza
+JOIN [prefix]quiz_attempts AS quiza
   ON q.id = quiza.quiz
-JOIN mdl_user AS u
+JOIN [prefix]user AS u
   ON quiza.userid = u.id
 
 WHERE quiza.preview = 0 AND 
-      quiza.state = '[attempt.state]' AND   # vybírá se vždy jen jeden stav, příp. lze udělat přes IN jako níže pro výběr více stavů
-      q.course IN ([course.id]) AND 
+      quiza.state IN ([attempt.state]) AND # 'abandoned', 'finished', 'inprogress'
 	  cm.id IN ([module.id])
 
 ORDER BY quiza.userid, quiza.attempt;

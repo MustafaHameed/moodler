@@ -1,7 +1,6 @@
 SELECT
 
   -- Quiz-related
-  q.id AS 'quiz.id',
   cm.id AS 'quiz.cmid',
   q.name AS 'quiz.name',
 
@@ -11,17 +10,23 @@ SELECT
 
   -- Question-related
   que.id AS 'question.id',
-  que.qtype AS 'question.type',
+  CASE que.qtype WHEN 'multichoice'
+    THEN concat (
+      que.qtype, '_', (
+        SELECT CASE qmu.single WHEN 0 THEN 'multiple' ELSE 'one' END
+        FROM [prefix]qtype_multichoice_options AS qmu
+        WHERE qmu.questionid = que.id)
+      )
+     ELSE que.qtype
+  END AS 'question.type',
   que.name AS 'question.name'
 
-FROM mdl_quiz AS q
-JOIN mdl_course_modules AS cm
+FROM [prefix]quiz AS q
+JOIN [prefix]course_modules AS cm
   ON q.course = cm.course AND q.id = cm.instance
-JOIN mdl_quiz_slots AS qs
+JOIN [prefix]quiz_slots AS qs
   ON q.id = qs.quizid
-JOIN mdl_question AS que
+JOIN [prefix]question AS que
   ON que.id = qs.questionid
 
-WHERE q.course = [course.id] AND cm.id = [module.id];
-
--- WHERE q.course = 4094 AND cm.id = 281948; -- Test s náhodnými úlohami
+WHERE cm.id = [module.id];

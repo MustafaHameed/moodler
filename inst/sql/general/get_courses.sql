@@ -6,9 +6,9 @@ SELECT
   c.visible AS 'course.visible',
   FROM_UNIXTIME(c.timecreated) AS 'course.timecreated',
   FROM_UNIXTIME(c.timemodified) AS 'course.timemodified',
-  (SELECT cc.id FROM mdl_course_categories AS cc
+  (SELECT cc.id FROM [prefix]course_categories AS cc
 		WHERE cc.id = c.category) AS 'course.categoryid',
-  (SELECT cc.name FROM mdl_course_categories AS cc
+  (SELECT cc.name FROM [prefix]course_categories AS cc
 		WHERE cc.id = c.category) AS 'course.categoryname'
 
 FROM [prefix]course AS c;
