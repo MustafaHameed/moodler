@@ -32,10 +32,18 @@ insert_values = function(query, fields, prefix, ...) {
   for (this_name in names(dots))
     query = gsub(
       pattern = paste0("\\[", this_name, "\\]"),
-      replacement = paste(dots[[this_name]], collapse = ","),
+      replacement = paste_sql(dots[[this_name]]),
       x = query)
 
   query
+}
+
+# Paste values
+paste_sql = function(x) {
+  if (any(is.numeric(x), is.double(x)))
+    paste(x, collapse = ",")
+  else
+    paste(paste("'", x, "'", sep = ""), collapse = ",")
 }
 
 # Load query from /inst
