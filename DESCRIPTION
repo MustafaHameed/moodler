@@ -3,12 +3,13 @@ Title: Use data from Moodle DB
 Version: 0.0.0.9000
 Authors@R: c(
     person("Jakub", "Chromec", , "chromec.jakub@gmail.com", c("aut", "cre")),
-    person("Libor", "Juhanak", , "juhanak@phil.muni.cz", role = "aut"),
-    person("RStudio", role = "cph")
+    person("Libor", "Juhanak", , "juhanak@phil.muni.cz", role = "aut")
     )
 Description: The purpose of moodler is to easily get data from Moodle database
     and format them for further analysis.
 Depends: R (>= 3.3.3)
+Imports:
+    DBI (>= 0.5)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
