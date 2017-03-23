@@ -12,6 +12,8 @@ use_query(module, query, prefix = "mdl_", ...)
 \item{query}{Query}
 
 \item{prefix}{Defaults to \code{"mdl_"}}
+
+\item{...}{Further arguments to match sql query fields}
 }
 \description{
 Load SQL query template.

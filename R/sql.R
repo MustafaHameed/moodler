@@ -4,6 +4,7 @@
 #' @param module Which module
 #' @param query Query
 #' @param prefix Defaults to \code{"mdl_"}
+#' @param ... Further arguments to match sql query fields
 #' @export
 
 use_query = function(module, query, prefix = "mdl_", ...) {
