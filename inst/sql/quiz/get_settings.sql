@@ -1,6 +1,7 @@
 SELECT
 
   -- id/name
+  q.course AS 'course.id',  
   cm.id AS 'quiz.cmid',
   q.name AS 'quiz.name',
 

@@ -1,6 +1,7 @@
 SELECT
-
+  
   -- Quiz-related
+  q.course AS 'course.id',
   cm.id AS 'quiz.cmid',
   q.name AS 'quiz.name',
 
