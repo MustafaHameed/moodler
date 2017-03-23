@@ -9,16 +9,18 @@ SELECT
   -- Question related  
   que.qtype AS 'question.type',  
   que.id AS 'question.id',
-  que.name AS 'question.name',                # Je i v get_questions, ale možná se hodí i sem?
+  que.name AS 'question.name',
   que.questiontext AS 'question.text',
-  qs.maxmark AS 'question.maxpoints',         # Počet bodů jak je aktuálně nastaven na stránce "Upravit test" 
-  quea.maxmark AS 'question.maxpoints.past',  # Je to třeba?
-  quea.minfraction AS 'question.mingrade',    # Toto jsme tam měly kůli možným záporným bodům
+  qs.maxmark AS 'question.maxpoints', 
+  quea.maxmark AS 'question.maxpoints.past',
+  quea.minfraction AS 'question.mingrade',
+  (SELECT saq.usecase FROM [prefix]qtype_shortanswer_options AS saq
+   WHERE saq.questionid = que.id) AS 'case.sensitivity',            # 0 = No, 1 = Yes
   
-  -- Answer related  
-  CASE queasd.VALUE WHEN 0 THEN 'False' ELSE 'True' END AS 'users.answer', # Tj. co uživatel zvybral jako odpověď.
-  FROM_UNIXTIME(queas.timecreated) AS 'answer.time' # V některých případech/režimech tesů může mít jedna otázka více 
-													# řádků, řádek s nejpozdějším časem by měla být finální odpověď.
+  -- Answer related
+  queasd.VALUE, # Tj. co uživatel vepsal jako odpověď.
+  FROM_UNIXTIME(queas.timecreated) AS 'answer.time'
+  
 
 FROM [prefix]quiz AS q
 JOIN [prefix]course_modules AS cm
@@ -38,7 +40,7 @@ LEFT JOIN [prefix]question_attempt_step_data AS queasd
 
 WHERE quiza.preview = 0 AND
       queasd.name = 'answer' AND
-      que.qtype = 'truefalse' AND
+      que.qtype = 'shortanswer' AND
       quiza.id IN ([attempt.id])
 
 ORDER BY quiza.quiz, quiza.userid, quiza.id, quea.questionid;

@@ -21,7 +21,7 @@ JOIN [prefix]question AS que
 LEFT JOIN [prefix]question_answers AS qans
     ON quea.questionid = qans.question
 
-WHERE que.qtype = 'truefalse' AND 
+WHERE que.qtype = 'shortanswer' AND 
       cm.id IN ([module.id])
 
 GROUP BY q.id, quea.questionid, qans.id
