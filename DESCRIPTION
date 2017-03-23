@@ -6,7 +6,7 @@ Authors@R: c(
     person("Libor", "Juhanak", , "juhanak@phil.muni.cz", role = "aut")
     )
 Description: The purpose of moodler is to easily get data from Moodle database
-    and format them for further analysis.
+    and format it for further analysis.
 Depends: R (>= 3.3.3)
 Imports:
     DBI (>= 0.5)
