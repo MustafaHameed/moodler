@@ -1,7 +1,7 @@
 SELECT
 
   -- Quiz related
-  q.id AS 'quiz.id',
+  q.course AS 'course.id',
   cm.id AS 'quiz.cmid',
   q.name AS 'quiz.name',
   q.sumgrades AS 'quiz.maxpoints',
