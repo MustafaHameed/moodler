@@ -11,8 +11,9 @@ SELECT
   que.id AS 'question.id',
   quea.maxmark AS 'question.maxpoints.past',  # Je to třeba?
   
-  -- Answer related  
-  CASE queasd.VALUE WHEN 0 THEN 'False' ELSE 'True' END AS 'users.answer', # Tj. co uživatel zvybral jako odpověď.
+  -- Answer related
+  queasd.name AS 'VALUE.type',
+  queasd.VALUE,
   FROM_UNIXTIME(queas.timecreated) AS 'answer.time' # V některých případech/režimech tesů může mít jedna otázka více 
 													# řádků, řádek s nejpozdějším časem by měla být finální odpověď.
 
@@ -31,8 +32,8 @@ LEFT JOIN [prefix]question_attempt_step_data AS queasd
   ON queasd.attemptstepid = queas.id
 
 WHERE quiza.preview = 0 AND
-      queasd.name = 'answer' AND
-      que.qtype = 'truefalse' AND
+      queasd.name IN ('answer', '-mark') AND
+      que.qtype = 'essay' AND
       quiza.id IN ([attempt.id])
 
 ORDER BY quiza.quiz, quiza.userid, quiza.id, quea.questionid;
