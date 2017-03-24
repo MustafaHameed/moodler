@@ -27,13 +27,14 @@ JOIN [prefix]question_attempts AS quea
   ON qa.uniqueid = quea.questionusageid
 JOIN [prefix]question AS que
   ON quea.questionid = que.id
-LEFT JOIN [prefix]qtype_multichoice_options AS qmu ON qmu.questionid = que.id
+JOIN [prefix]qtype_multichoice_options AS qmu 
+  ON qmu.questionid = que.id
 JOIN [prefix]quiz_slots AS qs
   ON q.id = qs.quizid AND que.id = qs.questionid  
 LEFT JOIN [prefix]question_answers AS qans
   ON quea.questionid = qans.question
 
-WHERE que.qtype = 'multichoice' AND qmu.single = 0 AND # 1 = multichoice_one
+WHERE que.qtype = 'multichoice' AND qmu.single = 0 AND # 0 = multichoice_multiple
       cm.id IN ([module.id])
 
 GROUP BY q.id, quea.questionid, qans.id

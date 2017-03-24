@@ -27,7 +27,8 @@ JOIN [prefix]question_attempts AS quea
   ON qa.uniqueid = quea.questionusageid
 JOIN [prefix]question AS que
   ON quea.questionid = que.id
-JOIN [prefix]qtype_multichoice_options AS qmu ON qmu.questionid = que.id
+JOIN [prefix]qtype_multichoice_options AS qmu 
+  ON qmu.questionid = que.id
 JOIN [prefix]quiz_slots AS qs
   ON q.id = qs.quizid AND que.id = qs.questionid  
 LEFT JOIN [prefix]question_answers AS qans
