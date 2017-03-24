@@ -2,7 +2,7 @@ SELECT
 
   -- Quiz related
   q.course AS 'course.id',
-  cm.id AS 'quiz.cmid',
+  cm.id AS 'quiz.id',
   q.name AS 'quiz.name',
   q.sumgrades AS 'quiz.maxpoints',
   q.grade AS 'quiz.maxgrade',
@@ -31,7 +31,7 @@ JOIN [prefix]quiz_attempts AS quiza
 JOIN [prefix]user AS u
   ON quiza.userid = u.id
 
-WHERE quiza.preview = 0 AND 
+WHERE quiza.preview = 0 AND
       quiza.state IN ([attempt.state]) AND # 'abandoned', 'finished', 'inprogress'
 	  cm.id IN ([module.id])
 

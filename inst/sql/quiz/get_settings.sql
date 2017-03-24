@@ -1,8 +1,8 @@
 SELECT
 
   -- id/name
-  q.course AS 'course.id',  
-  cm.id AS 'quiz.cmid',
+  q.course AS 'course.id',
+  cm.id AS 'quiz.id',
   q.name AS 'quiz.name',
 
   -- Attempt count

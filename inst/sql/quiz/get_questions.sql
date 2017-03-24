@@ -1,8 +1,8 @@
 SELECT
-  
+
   -- Quiz-related
   q.course AS 'course.id',
-  cm.id AS 'quiz.cmid',
+  cm.id AS 'quiz.id',
   q.name AS 'quiz.name',
 
   -- Question layout
