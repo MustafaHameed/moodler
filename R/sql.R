@@ -32,16 +32,18 @@ insert_values = function(query, fields, prefix, ...) {
   for (this_name in names(dots))
     query = gsub(
       pattern = paste0("\\[", this_name, "\\]"),
-      replacement = paste_sql(dots[[this_name]]),
+      replacement = paste_sql(x = dots[[this_name]], x.name = this_name),
       x = query)
 
   query
 }
 
 # Paste values
-paste_sql = function(x) {
+paste_sql = function(x, x.name) {
   if (any(is.numeric(x), is.double(x)))
     paste(x, collapse = ",")
+  else if (x.name == "prefix")
+    x
   else
     paste(paste("'", x, "'", sep = ""), collapse = ",")
 }
