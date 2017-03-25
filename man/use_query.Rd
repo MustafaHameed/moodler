@@ -16,5 +16,5 @@ use_query(module, query, prefix = "mdl_", ...)
 \item{...}{Further arguments to match sql query fields}
 }
 \description{
-Load SQL query template.
+Load SQL query template and replace given fields with values.
 }
