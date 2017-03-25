@@ -7,8 +7,29 @@ library(dplyr)
 dbGetQuery(.con, "SET NAMES utf8")
 dbGetQuery(.con, "SET sql_mode = ''")
 
-q74 = get_quiz(.con, 74)
-tf = moodler:::get_truefalse(q74, attempt.id = c(2514, 2533))
+# Module data fetching ----
+# =========================
 
-q79 = get_quiz(.con, 79)
-sa = moodler:::get_shortanswer(q79, attempt.id = 2534:2435)
+q = get_quiz(.con, 73)
+get_module_data(q, question.type = c("tre", "tri"))
+get_module_data(q)
+get_module_data(q, question.type = "truefalse")
+
+
+
+# Question types ----
+# ===================
+
+q = get_quiz(.con, 74)
+tf = moodler:::get_truefalse(
+  conn = q$connection,
+  quiz.id = q$settings$quiz.id,
+  attempt.id = c(2514, 2533)
+)
+
+q = get_quiz(.con, 79)
+sa = moodler:::get_shortanswer(
+  conn = q$connection,
+  quiz.id = q$settings$quiz.id,
+  attempt.id = 2534:2435
+)
