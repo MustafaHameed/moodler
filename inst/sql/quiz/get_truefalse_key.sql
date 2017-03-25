@@ -13,10 +13,10 @@ SELECT
   qs.maxmark AS 'question.maxpoints',
   quea.minfraction AS 'question.mingrade',
   
-  -- Answer related   
-  qans.id AS 'response.id',   
-  qans.answer AS 'response.text',
-  qans.fraction AS 'response.percent'
+  -- Answer related
+  qans.id AS 'answer.id',   
+  qans.answer AS 'answer.text',
+  qans.fraction AS 'answer.percent'
 
 FROM [prefix]quiz AS q
 JOIN [prefix]course_modules AS cm

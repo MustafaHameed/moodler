@@ -12,9 +12,8 @@ SELECT
   quea.maxmark AS 'question.maxpoints.past',  # Je to třeba?
   
   -- Answer related  
-  CASE queasd.VALUE WHEN 0 THEN 'False' ELSE 'True' END AS 'users.answer', # Tj. co uživatel zvybral jako odpověď.
-  FROM_UNIXTIME(queas.timecreated) AS 'answer.time' # V některých případech/režimech tesů může mít jedna otázka více 
-													# řádků, řádek s nejpozdějším časem by měla být finální odpověď.
+  CASE queasd.VALUE WHEN 0 THEN 'False' ELSE 'True' END AS 'answer.text', # Tj. co uživatel zvybral jako odpověď.
+  FROM_UNIXTIME(queas.timecreated) AS 'answer.time'
 
 FROM [prefix]quiz AS q
 JOIN [prefix]course_modules AS cm
