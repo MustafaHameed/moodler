@@ -9,7 +9,8 @@ Description: The purpose of moodler is to easily get data from Moodle database
     and format it for further analysis.
 Depends: R (>= 3.3.3)
 Imports:
-    DBI (>= 0.5)
+    DBI (>= 0.5),
+    dplyr (>= 0.5)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
