@@ -13,34 +13,40 @@ get_quiz = function(conn, quiz.id, attempt.state = "finished",
 
   stopifnot(all(attempt.state %in% c("abandoned", "finished", "inprogress")))
 
-  settings = dbGetQuery(
-    conn = conn,
-    statement = use_query(
-      module = "quiz",
-      query = "get_settings",
-      prefix = prefix,
-      module.id = quiz.id
+  settings = suppressWarnings(
+    dbGetQuery(
+      conn = conn,
+      statement = use_query(
+        module = "quiz",
+        query = "get_settings",
+        prefix = prefix,
+        module.id = quiz.id
+      )
     )
   )
 
-  attempts = dbGetQuery(
-    conn = conn,
-    statement = use_query(
-      module = "quiz",
-      query = "get_attempts",
-      prefix = prefix,
-      module.id = quiz.id,
-      attempt.state = attempt.state
+  attempts = suppressWarnings(
+    dbGetQuery(
+      conn = conn,
+      statement = use_query(
+        module = "quiz",
+        query = "get_attempts",
+        prefix = prefix,
+        module.id = quiz.id,
+        attempt.state = attempt.state
+      )
     )
   )
 
-  questions = dbGetQuery(
-    conn = conn,
-    statement = use_query(
-      module = "quiz",
-      query = "get_questions",
-      prefix = prefix,
-      module.id = quiz.id
+  questions = suppressWarnings(
+    dbGetQuery(
+      conn = conn,
+      statement = use_query(
+        module = "quiz",
+        query = "get_questions",
+        prefix = prefix,
+        module.id = quiz.id
+      )
     )
   )
 
@@ -60,8 +66,9 @@ get_quiz = function(conn, quiz.id, attempt.state = "finished",
           structure(
             list(list_settings[[this_id]],
                  list_attempts[[this_id]],
-                 list_questions[[this_id]]),
-            names = c("settings", "attempts", "questions"),
+                 list_questions[[this_id]],
+                 conn),
+            names = c("settings", "attempts", "questions", "connection"),
             class = "mdl_quiz")
       ),
       names = quiz_id_u
@@ -70,8 +77,8 @@ get_quiz = function(conn, quiz.id, attempt.state = "finished",
   } else {
 
     structure(
-      list(settings, attempts, questions),
-      names = c("settings", "attempts", "questions"),
+      list(settings, attempts, questions, conn),
+      names = c("settings", "attempts", "questions", "connection"),
       class = "mdl_quiz")
   }
 }
