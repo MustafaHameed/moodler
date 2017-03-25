@@ -1,6 +1,6 @@
 #' Load SQL Query
 #'
-#' Load SQL query template.
+#' Load SQL query template and replace given fields with values.
 #' @param module Which module
 #' @param query Query
 #' @param prefix Defaults to \code{"mdl_"}
@@ -52,7 +52,9 @@ paste_sql = function(x, x.name) {
 load_sql = function(module, query) {
   sql_path = paste0(module, "/", query, ".sql")
   sql_file = system.file("sql", sql_path, package="moodler")
-  sql_text = paste(readLines(sql_file), collapse = "\n")
+  sql_text = suppressWarnings(
+    paste(readLines(sql_file), collapse = "\n")
+  )
   list(
     query = sql_text,
     fields = gsub(
