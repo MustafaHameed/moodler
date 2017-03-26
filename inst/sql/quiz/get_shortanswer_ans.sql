@@ -14,6 +14,7 @@ SELECT
 # WHERE saq.questionid = que.id) AS 'case.sensitivity',            # 0 = No, 1 = Yes
   
   -- Answer related
+  queasd.name AS 'answer.data', 
   queasd.VALUE AS 'answer.text',
   queas.fraction AS 'answer.percent',
   FROM_UNIXTIME(queas.timecreated) AS 'answer.time'
@@ -34,7 +35,7 @@ LEFT JOIN [prefix]question_attempt_step_data AS queasd
   ON queasd.attemptstepid = queas.id
 
 WHERE quiza.preview = 0 AND
-      queasd.name IN ('answer') AND
+      queasd.name IN ('answer','-finish') AND
       que.qtype = 'shortanswer' AND
       quiza.id IN ([attempt.id])
 
