@@ -9,51 +9,75 @@
 #' @export
 
 get_quiz = function(conn, quiz.id, attempt.state = "finished",
-                    prefix = "mdl_") {
+                    prefix = "mdl_",
+                    suppress.warnings = TRUE) {
 
   stopifnot(all(attempt.state %in% c("abandoned", "finished", "inprogress")))
 
-  settings = suppressWarnings(
-    dbGetQuery(
+  if (suppress.warnings) {
+
+    settings = suppressWarnings(dbGetQuery(
       conn = conn,
       statement = use_query(
         module = "quiz",
         query = "get_settings",
         prefix = prefix,
-        module.id = quiz.id
-      )
-    )
-  )
+        module.id = quiz.id)))
 
-  attempts = suppressWarnings(
-    dbGetQuery(
+    attempts = suppressWarnings(dbGetQuery(
+        conn = conn,
+        statement = use_query(
+          module = "quiz",
+          query = "get_attempts",
+          prefix = prefix,
+          module.id = quiz.id,
+          attempt.state = attempt.state)))
+
+    questions = suppressWarnings(dbGetQuery(
+        conn = conn,
+        statement = use_query(
+          module = "quiz",
+          query = "get_questions",
+          prefix = prefix,
+          module.id = quiz.id)))
+
+  } else {
+
+    settings = dbGetQuery(
+      conn = conn,
+      statement = use_query(
+        module = "quiz",
+        query = "get_settings",
+        prefix = prefix,
+        module.id = quiz.id))
+
+    attempts = dbGetQuery(
       conn = conn,
       statement = use_query(
         module = "quiz",
         query = "get_attempts",
         prefix = prefix,
         module.id = quiz.id,
-        attempt.state = attempt.state
-      )
-    )
-  )
+        attempt.state = attempt.state))
 
-  questions = suppressWarnings(
-    dbGetQuery(
+    questions = dbGetQuery(
       conn = conn,
       statement = use_query(
         module = "quiz",
         query = "get_questions",
         prefix = prefix,
-        module.id = quiz.id
-      )
-    )
-  )
+        module.id = quiz.id))
+  }
 
-  # Unique quiz ID
-  quiz_id_u = as.character(unique(settings$quiz.id))
+  settings$quiztimemodified = as.POSIXct(settings$quiztimemodified)
+  attempts$attempt.start = as.POSIXct(attempts$attempt.start)
+  attempts$attempt.finish = as.POSIXct(attempts$attempt.finish)
+  attempts$attempt.time.taken = as.difftime(attempts$attempt.time.taken,
+                                            units = "min")
 
-  if (length(quiz_id_u) > 1) {
+  unique_quiz_id = as.character(unique(settings$quiz.id))
+
+  if (length(unique_quiz_id) > 1) {
 
     list_settings = split(settings, settings$quiz.id)
     list_attempts = split(attempts, attempts$quiz.id)
@@ -61,7 +85,7 @@ get_quiz = function(conn, quiz.id, attempt.state = "finished",
 
     structure(
       lapply(
-        X = quiz_id_u,
+        X = unique_quiz_id,
         FUN = function(this_id)
           structure(
             list(list_settings[[this_id]],
@@ -71,7 +95,7 @@ get_quiz = function(conn, quiz.id, attempt.state = "finished",
             names = c("settings", "attempts", "questions", "connection"),
             class = "mdl_quiz")
       ),
-      names = quiz_id_u
+      names = unique_quiz_id
     )
 
   } else {

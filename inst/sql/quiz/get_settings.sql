@@ -17,21 +17,21 @@ SELECT
 	q.navmethod,           # Navigation method
 	q.preferredbehaviour,  # Question behavior
 	q.canredoquestions,    # Allow redo within an attempt (depends on question behavior)
-    q.attemptonlast,       # Each attempt builds on the last (1 = yes, 0 = no)
+  q.attemptonlast,       # Each attempt builds on the last (1 = yes, 0 = no)
 
   -- Time & attempt limits
-    q.timeopen,      # Quiz opened
+  q.timeopen,      # Quiz opened
 	q.timeclose,     # Quiz closed (quiz closed - quiz opened = time available)
 	q.timelimit,     #
-    q.attempts,      # Attempts alowed
+  q.attempts,      # Attempts alowed
 	q.delay1,        # Enforced delay between 1st and 2nd attempts
 	q.delay2,        # Enforced delay between later attempts
 
   -- Grades
 	q.grademethod,                  # Grading method (for more than one attempt)
-    q.completionattemptsexhausted,  # Completion tracking: All available attempts completed
+  q.completionattemptsexhausted,  # Completion tracking: All available attempts completed
 	q.completionpass,               # Completion tracking: Require passing grade
-    q.sumgrades,                    # Quiz points total
+  q.sumgrades,                    # Quiz points total
 	q.grade,                        # Quiz grade
 
 	-- Grade to pass
@@ -39,7 +39,7 @@ SELECT
 		WHERE gi.iteminstance = q.id AND gi.itemmodule = 'quiz') AS 'gradetopass',
 
   -- Quiz created/modified
-	FROM_UNIXTIME(q.timecreated) AS 'quiztimecreated',
+	# FROM_UNIXTIME(q.timecreated) AS 'quiztimecreated',
 	FROM_UNIXTIME(q.timemodified) AS 'quiztimemodified'
 
 FROM [prefix]quiz AS q

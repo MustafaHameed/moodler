@@ -8,9 +8,9 @@ SELECT
   q.grade AS 'quiz.maxgrade',
 
   -- User related
-  u.id AS 'u.id',
-  u.email AS 'u.email',
-  CONCAT(u.lastname, ', ', u.firstname) AS 'u.name',
+  u.id AS 'user.id',
+  u.email AS 'user.email',
+  CONCAT(u.lastname, ', ', u.firstname) AS 'user.name',
 
   -- Attempt related
   quiza.id AS 'attempt.id',
