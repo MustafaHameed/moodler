@@ -5,6 +5,7 @@
 #' @param question.type Char vector
 #' @param quiz.id Numeric vector
 #' @param prefix Defaults to \code{"mdl_quiz"}
+#' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
 #' @importFrom DBI dbGetQuery
 
 get_question_key = function(conn, question.type, quiz.id,
@@ -36,6 +37,7 @@ get_question_key = function(conn, question.type, quiz.id,
 #' @param question.type Char vector
 #' @param attempt.id Numeric vector
 #' @param prefix Defaults to \code{"mdl_quiz"}
+#' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
 #' @importFrom DBI dbGetQuery
 
 get_question_ans = function(conn, question.type, attempt.id,
