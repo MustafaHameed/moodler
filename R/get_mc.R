@@ -5,6 +5,7 @@
 #' @param quiz.id Numeric vector of length 1
 #' @param attempt.id Vector of attempt ids
 #' @param prefix Defaults to \code{"mdl_quiz"}
+#' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
 #' @importFrom dplyr %>% left_join select mutate
 #' @importFrom tidyr separate_rows
 
@@ -57,6 +58,7 @@ get_multichoice_one = function(conn, quiz.id, attempt.id, prefix = "mdl_",
 #' @param quiz.id Numeric vector of length 1
 #' @param attempt.id Vector of attempt ids
 #' @param prefix Defaults to \code{"mdl_quiz"}
+#' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
 #' @importFrom dplyr %>% left_join select mutate
 #' @importFrom tidyr separate_rows
 
@@ -91,8 +93,8 @@ get_multichoice_multiple = function(conn, quiz.id, attempt.id, prefix = "mdl_",
            order.time = answer.time) %>%
     separate_rows(answer.id, order.answer, convert = TRUE)
 
-  ans_tidy =
-    left_join(ans_answer, ans_order,
+  ans_tidy = ans_answer %>%
+    left_join(ans_order,
               by = c("attempt.id", "question.id", "order.answer")) %>%
     group_by(attempt.id, question.id) %>%
     select(course.id, attempt.id, question.id, question.type,
