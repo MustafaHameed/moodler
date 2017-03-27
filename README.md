@@ -3,6 +3,8 @@
 moodler
 =======
 
+[![Travis-CI Build Status](https://travis-ci.org/jchrom/moodler.svg?branch=master)](https://travis-ci.org/jchrom/moodler)
+
 The purpose of moodler is to easily get data from Moodle database and format it for further analysis.
 
 Installation
