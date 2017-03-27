@@ -5,6 +5,7 @@
 #' @param quiz.id Quiz ID (also in browser address bar)
 #' @param attempt.state Defaults to \code{"finished"}
 #' @param prefix Database table prefix, defaults to \code{"mdl_"}
+#' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
 #' @importFrom DBI dbGetQuery
 #' @export
 
