@@ -3,15 +3,15 @@ SELECT
   -- Quiz/User/Attempt
   q.course AS 'course.id',
   cm.id AS 'quiz.id',
-  quiza.userid AS 'user.id',
+  # quiza.userid AS 'user.id',
   quiza.id AS 'attempt.id',
-  
-  -- Question related  
-  que.qtype AS 'question.type',  
+
+  -- Question related
+  que.qtype AS 'question.type',
   que.id AS 'question.id',
   quea.maxmark AS 'question.maxpoints.past',  # Je to třeba?
-  
-  -- Answer related  
+
+  -- Answer related
   CASE queasd.VALUE WHEN 0 THEN 'False' ELSE 'True' END AS 'answer.text', # Tj. co uživatel zvybral jako odpověď.
   FROM_UNIXTIME(queas.timecreated) AS 'answer.time'
 
