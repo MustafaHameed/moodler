@@ -7,18 +7,26 @@
 #' @param prefix Defaults to \code{"mdl_quiz"}
 #' @importFrom DBI dbGetQuery
 
-get_question_key = function(conn, question.type, quiz.id, prefix = "mdl_") {
-  suppressWarnings(
+get_question_key = function(conn, question.type, quiz.id,
+                            prefix = "mdl_", suppress.warnings = TRUE) {
+
+  if (suppress.warnings) {
+    suppressWarnings(dbGetQuery(
+      conn = conn,
+      statement = use_query(
+        module = "quiz",
+        query = paste0("get_", question.type, "_key"),
+        prefix = prefix,
+        module.id = quiz.id)))
+  } else {
     dbGetQuery(
       conn = conn,
       statement = use_query(
         module = "quiz",
         query = paste0("get_", question.type, "_key"),
         prefix = prefix,
-        module.id = quiz.id
-      )
-    )
-  )
+        module.id = quiz.id))
+  }
 }
 
 #' Get Question Answer
@@ -30,57 +38,43 @@ get_question_key = function(conn, question.type, quiz.id, prefix = "mdl_") {
 #' @param prefix Defaults to \code{"mdl_quiz"}
 #' @importFrom DBI dbGetQuery
 
-get_question_ans = function(conn, question.type, attempt.id, prefix = "mdl_") {
-  suppressWarnings(
-    dbGetQuery(
+get_question_ans = function(conn, question.type, attempt.id,
+                            prefix = "mdl_", suppress.warnings = TRUE) {
+  if (suppress.warnings) {
+    ans = suppressWarnings(dbGetQuery(
       conn = conn,
       statement = use_query(
         module = "quiz",
         query = paste0("get_", question.type, "_ans"),
         prefix = prefix,
-        attempt.id = attempt.id
-      )
-    )
-  )
+        attempt.id = attempt.id)))
+  } else {
+    ans = dbGetQuery(
+      conn = conn,
+      statement = use_query(
+        module = "quiz",
+        query = paste0("get_", question.type, "_ans"),
+        prefix = prefix,
+        attempt.id = attempt.id))
+  }
+  ans$answer.time = as.POSIXct(ans$answer.time)
+  ans
 }
 
-#' Join answers and keys
-#'
-#' This should work for: tf, sa. Questions that are missing will be replaced by
-#' NA records.
-#' @param key Data from get_[question type]_key query
-#' @param ans Data from get_[question type]_ans query
-#' @importFrom dplyr %>% select starts_with left_join mutate filter group_by
+dots_to_string = function(...) {
+  if (is.null(names(list(...))))
+    unlist(list(...))
+  else
+    paste(names(list(...)), "=='", unlist(list(...)), "'", sep = "")
+}
 
-join_key_ans = function(key, ans) {
-  key_ans = has_answered(key, ans)
-  key_ans %>%
-    left_join(ans) %>%
-    left_join(key) %>%
+filter_latest = function(x, ...) {
+  filter_args = dots_to_string(...)
+  x %>%
+    filter_(filter_args) %>%
     group_by(attempt.id, question.id) %>%
-    mutate(answer.time = as.POSIXct(answer.time)) %>%
-    filter(answer.time == max(answer.time) | is.na(answer.time)) %>%
-    as.data.frame()
+    filter(answer.time == max(answer.time))
 }
 
-has_answered = function(key, ans) {
 
-  questions = key %>%
-    select(-starts_with("answer")) %>%
-    unique()
 
-  attempts = ans %>%
-    select(user.id, attempt.id) %>%
-    unique()
-
-  # Get all combinations of attempt x question
-  att_que =
-    expand.grid(
-      attempt.id = unique(ans$attempt.id),
-      question.id = unique(key$question.id)
-    )
-
-  att_que %>%
-    left_join(questions, by = "question.id") %>%
-    left_join(attempts, by = "attempt.id")
-}
