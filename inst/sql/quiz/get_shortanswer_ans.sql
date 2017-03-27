@@ -3,22 +3,22 @@ SELECT
   -- Quiz/User/Attempt
   q.course AS 'course.id',
   cm.id AS 'quiz.id',
-  quiza.userid AS 'user.id',
+  #quiza.userid AS 'user.id',
   quiza.id AS 'attempt.id',
-  
-  -- Question related  
-  que.qtype AS 'question.type',  
+
+  -- Question related
+  que.qtype AS 'question.type',
   que.id AS 'question.id',
   quea.maxmark AS 'question.maxpoints.past',
 # (SELECT saq.usecase FROM [prefix]qtype_shortanswer_options AS saq
 # WHERE saq.questionid = que.id) AS 'case.sensitivity',            # 0 = No, 1 = Yes
-  
+
   -- Answer related
-  queasd.name AS 'answer.data', 
+  queasd.name AS 'answer.data',
   queasd.VALUE AS 'answer.text',
   queas.fraction AS 'answer.percent',
   FROM_UNIXTIME(queas.timecreated) AS 'answer.time'
-  
+
 
 FROM [prefix]quiz AS q
 JOIN [prefix]course_modules AS cm
