@@ -12,9 +12,9 @@ print.mdl_quiz = function(x, ...) {
     sep = "")
 
   cat(
-    "\n\ncreated:    ", x$settings$quiztimecreated,
-    " [id: ", x$settings$quiz.id, ", course id: ", x$settings$course.id, "]",
-    "\nmodified:   ", x$settings$quiztimemodified,
+    "\n\nquiz id:    ", x$settings$quiz.id,
+    " [course id: ", x$settings$course.id, "]",
+    "\nmodified:   ", as.character(x$settings$quiztimemodified),
     sep = "")
 
   cat(
@@ -23,12 +23,11 @@ print.mdl_quiz = function(x, ...) {
     sep = "")
 
   if (!is.null(x$attempts)) {
-    time_taken = as.difftime(x$attempts$attempt.time.taken, units = "mins")
-    mean_min = mean(time_taken, na.rm = TRUE)
+    mean_min = mean(x$attempts$attempt.time.taken, na.rm = TRUE)
     cat(
       "\nattempts:   ",
       x$settings$attemptscount,
-      " [", length(unique(x$attempts$u.id)),
+      " [", length(unique(x$attempts$user.id)),
       " users, mean duration ", round(mean_min, 1), " min]",
       sep = ""
     )
@@ -53,7 +52,7 @@ print.mdl_quiz = function(x, ...) {
 #'
 #' Fetch item data from quiz.
 #' @param x An object of class \code{"mdl_quiz"}
-#' @param attempt Defaults to \code{"first"} but \code{"all"} and \code{"last"} are also allowed
+#' @param attempt Defaults to \code{"first"}; \code{"all"} and \code{"last"} are also allowed, or a numeric vector specifying attempt IDs
 #' @param question.type Char vector, if \code{NULL}, all items regardless of type will be fetched
 #' @param prefix Defaults to \code{"mdl_"}
 #' @param ... Further arguments passed on to methods
@@ -64,48 +63,75 @@ get_module_data.mdl_quiz = function(x, attempt = "first",
                                     prefix = "mdl_",
                                     ...) {
 
-  attempt_id = get_attempt_id(x = x$attempts, attempt = attempt)
-  available_types = unique(x$questions$question.type)
+  if (!nrow(x$attempts)) {
+    message("No attempts: aborted")
+    return()
+  }
 
-  if (!is.null(question.type)) {
-    if (!all(question.type %in% available_types)) {
-      missing_type = paste(
-        question.type[!question.type %in% available_types],
-        collapse = ", ")
-      stop(missing_type, " not available in this quiz", call. = FALSE)
+  stopifnot(any(is.character(attempt), is.numeric(attempt)))
+
+  if (is.character(attempt)) {
+    attempt_id = get_attempt_id(
+      x = x$attempts,
+      attempt = attempt)
+  }
+
+  if (is.numeric(attempt)) {
+    attempt_id = dplyr::intersect(
+      x = attempt,
+      y = x$attempts$attempt.id)
+    if (length(attempt_id) > 0) {
+      message("Fetching attempts:\n", paste(attempt_id, collapse = " "))
+    } else {
+      stop("No such attempt", call. = FALSE)
     }
   }
 
-  dat = lapply(available_types, function(this_type) {
-    fun_name = paste0("get_", this_type)
-    c(tryCatch(
-      expr = do.call(
-        what = fun_name,
-        args = list(conn = x$connection,
-                    quiz.id = x$settings$quiz.id,
-                    attempt.id = attempt_id,
-                    prefix = prefix)),
-      error = function(e)
-        message(e$message)
-      ))
-  })
+  if (is.null(question.type)) {
+    question_type = unique(x$questions$question.type)
+  } else {
+    question_type = dplyr::intersect(
+      x = question.type,
+      y = x$questions$question.type)
+    if (length(question_type) > 0) {
+      message("Fetching question types:\n", paste(question_type, collapse = " "))
+    } else {
+      stop("No such question", call. = FALSE)
+    }
+  }
 
-  structure(dat, names = available_types)
+  dat = lapply(
+    X = question_type,
+    FUN = function(this_type) {
+      c(tryCatch(
+        expr = do.call(
+          what = paste0("get_", this_type),
+          args = list(conn = x$connection,
+                      quiz.id = x$settings$quiz.id,
+                      attempt.id = attempt_id,
+                      prefix = prefix)
+        ),
+        error = function(e)
+          message(e$message)
+      ))
+    })
+
+  structure(dat, names = question_type)
 }
 
 get_attempt_id = function(x, attempt = "first") {
 
-  stopifnot(attempt %in% c("first", "all", "last"))
+  x = switch(
+    EXPR = attempt,
+    first = x %>%
+      group_by(u.id) %>%
+      filter(attempt.number == min(attempt.number)),
+    last =  x %>%
+      group_by(u.id) %>%
+      filter(attempt.number == max(attempt.number)),
+    all = x,
+    message("Invalid attempt specification; using 'all'")
+  )
 
-  attempt_number = list(
-    first = "attempt.number == min(attempt.number)",
-    all = "is.integer(attempt.number)",
-    last = "attempt.number == max(attempt.number)")
-
-  attempt = attempt_number[[attempt]]
-
-  x %>%
-    group_by(u.id) %>%
-    filter_(.dots = attempt) %>%
-    `[[`("attempt.id")
+  x$attempt.id
 }
