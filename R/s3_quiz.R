@@ -55,12 +55,14 @@ print.mdl_quiz = function(x, ...) {
 #' @param attempt Defaults to \code{"first"}; \code{"all"} and \code{"last"} are also allowed, or a numeric vector specifying attempt IDs
 #' @param question.type Char vector, if \code{NULL}, all items regardless of type will be fetched
 #' @param prefix Defaults to \code{"mdl_"}
+#' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
 #' @param ... Further arguments passed on to methods
 #' @export
 
 get_module_data.mdl_quiz = function(x, attempt = "first",
                                     question.type = NULL,
                                     prefix = "mdl_",
+                                    suppress.warnings = TRUE,
                                     ...) {
 
   if (!nrow(x$attempts)) {
@@ -94,7 +96,9 @@ get_module_data.mdl_quiz = function(x, attempt = "first",
       x = question.type,
       y = x$questions$question.type)
     if (length(question_type) > 0) {
-      message("Fetching question types:\n", paste(question_type, collapse = " "))
+      message(
+        "Fetching question types:\n",
+        paste(question_type, collapse = " "))
     } else {
       stop("No such question", call. = FALSE)
     }
@@ -103,20 +107,22 @@ get_module_data.mdl_quiz = function(x, attempt = "first",
   dat = lapply(
     X = question_type,
     FUN = function(this_type) {
-      c(tryCatch(
-        expr = do.call(
-          what = paste0("get_", this_type),
-          args = list(conn = x$connection,
-                      quiz.id = x$settings$quiz.id,
-                      attempt.id = attempt_id,
-                      prefix = prefix)
-        ),
-        error = function(e)
-          message(e$message)
-      ))
+      this_fun = paste0("get_", this_type)
+      if (exists(x = this_fun, mode = "function")) {
+        message("Fething: ", this_type)
+        do.call(
+          what = this_fun,
+          args = list(
+            conn = x$connection,
+            quiz.id = x$settings$quiz.id,
+            attempt.id = attempt_id,
+            prefix = prefix,
+            suppress.warnings = suppress.warnings))
+      }
     })
 
-  structure(dat, names = question_type)
+  names(dat) = question_type
+  dat[!sapply(dat, is.null)]
 }
 
 get_attempt_id = function(x, attempt = "first") {
@@ -124,10 +130,10 @@ get_attempt_id = function(x, attempt = "first") {
   x = switch(
     EXPR = attempt,
     first = x %>%
-      group_by(u.id) %>%
+      group_by(user.id) %>%
       filter(attempt.number == min(attempt.number)),
     last =  x %>%
-      group_by(u.id) %>%
+      group_by(user.id) %>%
       filter(attempt.number == max(attempt.number)),
     all = x,
     message("Invalid attempt specification; using 'all'")
