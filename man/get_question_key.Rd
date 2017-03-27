@@ -4,7 +4,8 @@
 \alias{get_question_key}
 \title{Get Question Key}
 \usage{
-get_question_key(conn, question.type, quiz.id, prefix = "mdl_")
+get_question_key(conn, question.type, quiz.id, prefix = "mdl_",
+  suppress.warnings = TRUE)
 }
 \arguments{
 \item{conn}{Connection object}
@@ -14,6 +15,8 @@ get_question_key(conn, question.type, quiz.id, prefix = "mdl_")
 \item{quiz.id}{Numeric vector}
 
 \item{prefix}{Defaults to \code{"mdl_quiz"}}
+
+\item{suppress.warnings}{Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}}
 }
 \description{
 Get question key.

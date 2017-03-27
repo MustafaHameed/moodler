@@ -4,7 +4,8 @@
 \alias{get_question_ans}
 \title{Get Question Answer}
 \usage{
-get_question_ans(conn, question.type, attempt.id, prefix = "mdl_")
+get_question_ans(conn, question.type, attempt.id, prefix = "mdl_",
+  suppress.warnings = TRUE)
 }
 \arguments{
 \item{conn}{Connection object}
@@ -14,6 +15,8 @@ get_question_ans(conn, question.type, attempt.id, prefix = "mdl_")
 \item{attempt.id}{Numeric vector}
 
 \item{prefix}{Defaults to \code{"mdl_quiz"}}
+
+\item{suppress.warnings}{Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}}
 }
 \description{
 Get question answer.

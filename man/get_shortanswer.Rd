@@ -4,7 +4,8 @@
 \alias{get_shortanswer}
 \title{Get shortanswer item data}
 \usage{
-get_shortanswer(conn, quiz.id, attempt.id, prefix = "mdl_")
+get_shortanswer(conn, quiz.id, attempt.id, prefix = "mdl_",
+  suppress.warnings = TRUE)
 }
 \arguments{
 \item{conn}{Connection object}
@@ -14,6 +15,8 @@ get_shortanswer(conn, quiz.id, attempt.id, prefix = "mdl_")
 \item{attempt.id}{Vector of attempt ids}
 
 \item{prefix}{Defaults to \code{"mdl_quiz"}}
+
+\item{suppress.warnings}{Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}}
 }
 \description{
 Get shertanswer item data.

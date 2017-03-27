@@ -4,7 +4,8 @@
 \alias{get_quiz}
 \title{Get Quiz}
 \usage{
-get_quiz(conn, quiz.id, attempt.state = "finished", prefix = "mdl_")
+get_quiz(conn, quiz.id, attempt.state = "finished", prefix = "mdl_",
+  suppress.warnings = TRUE)
 }
 \arguments{
 \item{conn}{DB connection}
@@ -14,6 +15,8 @@ get_quiz(conn, quiz.id, attempt.state = "finished", prefix = "mdl_")
 \item{attempt.state}{Defaults to \code{"finished"}}
 
 \item{prefix}{Database table prefix, defaults to \code{"mdl_"}}
+
+\item{suppress.warnings}{Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}}
 }
 \description{
 Fetches basic quiz object.

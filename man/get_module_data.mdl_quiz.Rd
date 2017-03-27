@@ -5,16 +5,18 @@
 \title{Get Quiz Data}
 \usage{
 \method{get_module_data}{mdl_quiz}(x, attempt = "first",
-  question.type = NULL, prefix = "mdl_", ...)
+  question.type = NULL, prefix = "mdl_", suppress.warnings = TRUE, ...)
 }
 \arguments{
 \item{x}{An object of class \code{"mdl_quiz"}}
 
-\item{attempt}{Defaults to \code{"first"} but \code{"all"} and \code{"last"} are also allowed}
+\item{attempt}{Defaults to \code{"first"}; \code{"all"} and \code{"last"} are also allowed, or a numeric vector specifying attempt IDs}
 
 \item{question.type}{Char vector, if \code{NULL}, all items regardless of type will be fetched}
 
 \item{prefix}{Defaults to \code{"mdl_"}}
+
+\item{suppress.warnings}{Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}}
 
 \item{...}{Further arguments passed on to methods}
 }
