@@ -21,9 +21,12 @@ get_truefalse = function(conn, quiz.id, attempt.id, prefix = "mdl_") {
     attempt.id = attempt.id,
     prefix = prefix)
 
-  ans_tidy = join_key_ans(key = key, ans = ans)
+  ans_tidy = ans %>%
+    group_by(attempt.id, question.id) %>%
+    filter(answer.time == max(answer.time) | is.na(answer.time)) %>%
+    as.data.frame()
 
-  list(key = key, ans = ans_tidy)
+  list(key = key, ans = ans_tidy, ans_raw = ans)
 }
 
 #' Get shortanswer item data
@@ -49,7 +52,22 @@ get_shortanswer = function(conn, quiz.id, attempt.id, prefix = "mdl_") {
     attempt.id = attempt.id,
     prefix = prefix)
 
-  ans_tidy = join_key_ans(key = key, ans = ans)
+  ans_answer = ans %>%
+    filter_latest(answer.data = "answer") %>%
+    select(-c(answer.percent, answer.data))
 
-  list(key = key, ans = ans_tidy)
+  ans_finish = ans %>%
+    filter(!is.na(answer.percent)) %>%
+    rename(finish.time = answer.time) %>%
+    group_by(attempt.id, question.id) %>%
+    filter(finish.time == max(finish.time)) %>%
+    select(attempt.id, question.id, answer.percent, finish.time)
+
+  ans_tidy = ans_answer %>%
+    left_join(ans_finish, by = c("attempt.id", "question.id")) %>%
+    filter(answer.time <= finish.time) %>%
+    mutate(answer.id = NA_real_) %>%
+    as.data.frame()
+
+  list(key = key, ans = ans_tidy, ans_raw = ans)
 }
