@@ -5,9 +5,11 @@
 #' @param quiz.id Numeric vector of length 1
 #' @param attempt.id Vector of attempt ids
 #' @param prefix Defaults to \code{"mdl_quiz"}
+#' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
 #' @importFrom dplyr %>% left_join select mutate
 
-get_truefalse = function(conn, quiz.id, attempt.id, prefix = "mdl_") {
+get_truefalse = function(conn, quiz.id, attempt.id, prefix = "mdl_",
+                         suppress.warnings = TRUE) {
 
   key = get_question_key(
     conn = conn,
@@ -36,9 +38,11 @@ get_truefalse = function(conn, quiz.id, attempt.id, prefix = "mdl_") {
 #' @param quiz.id Numeric vector of length 1
 #' @param attempt.id Vector of attempt ids
 #' @param prefix Defaults to \code{"mdl_quiz"}
+#' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
 #' @importFrom dplyr %>% left_join select mutate
 
-get_shortanswer = function(conn, quiz.id, attempt.id, prefix = "mdl_") {
+get_shortanswer = function(conn, quiz.id, attempt.id, prefix = "mdl_",
+                           suppress.warnings = TRUE) {
 
   key = get_question_key(
     conn = conn,
