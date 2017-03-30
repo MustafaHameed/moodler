@@ -1,9 +1,6 @@
 SELECT
 
   -- Quiz/User/Attempt
-  q.course AS 'course.id',
-  cm.id AS 'quiz.id',
-  quiza.userid AS 'user.id',
   quiza.id AS 'attempt.id',
   
   -- Question related  
@@ -17,17 +14,14 @@ SELECT
      ELSE que.qtype
   END AS 'question.type',
   que.id AS 'question.id',
-  quea.maxmark AS 'question.maxpoints.past',
+  quea.maxmark AS 'question.maxpoints',
+  quea.minfraction AS 'question.mingrade',
   
   -- Answer related
   queas.fraction AS 'answer.percent',                 # Procento získaných bodů za úlohu
   FROM_UNIXTIME(queas.timecreated) AS 'answer.time'
 
-FROM [prefix]quiz AS q
-JOIN [prefix]course_modules AS cm
-  ON q.course = cm.course AND q.id = cm.instance
-JOIN [prefix]quiz_attempts AS quiza
-  ON q.id = quiza.quiz
+FROM [prefix]quiz_attempts AS quiza
 JOIN [prefix]question_attempts AS quea
   ON quea.questionusageid = quiza.uniqueid
 JOIN [prefix]question AS que
