@@ -1,13 +1,3 @@
-# libs ----
-library(DBI)
-library(dplyr)
-library(moodler)
-
-# con ----
-.con = dbConnect(RMySQL::MySQL(), group = "moodler")
-dbGetQuery(.con, "SET NAMES utf8")
-dbGetQuery(.con, "SET sql_mode = ''")
-
 # Module data fetching ----
 # =========================
 
@@ -44,10 +34,10 @@ sa = moodler:::get_shortanswer(
 # MC 1 ----
 # =========
 
+source("dev/conn.R")
 q = get_quiz(.con, 80)
 mc1 = moodler:::get_multichoice_one(
   conn = q$connection,
-  quiz.id = q$settings$quiz.id,
   attempt.id = q$attempts$attempt.id
 )
 
