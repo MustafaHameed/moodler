@@ -20,7 +20,9 @@ SELECT
       )
      ELSE que.qtype
   END AS 'question.type',
-  que.name AS 'question.name'
+  que.name AS 'question.name',
+  que.questiontext AS 'question.text',
+  qs.maxmark AS 'q.maxpoints'
 
 FROM [prefix]quiz AS q
 JOIN [prefix]course_modules AS cm
