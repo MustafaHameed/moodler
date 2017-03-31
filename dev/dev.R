@@ -1,9 +1,10 @@
 # Module data fetching ----
 # =========================
 
+source("dev/conn.R")
 q = get_quiz(.con, 73)
+md = get_module_data(q, distractors = TRUE)
 get_module_data(q, question.type = c("tre", "tri"))
-get_module_data(q)
 get_module_data(q, question.type = "truefalse")
 
 q = get_quiz(.con, 78)
@@ -13,6 +14,16 @@ mc1 = get_module_data(q, attempt = 0)
 
 mc0 = get_module_data(q, question.type = "multichoice_multiple")
 
+# Item-level data ----
+# ====================
+
+source("dev/conn.R")
+q = get_quiz(.con, 74)
+a = moodler:::get_question_ans(
+  conn = .con,
+  question.type = "allquestions",
+  attempt.id = q$attempts$attempt.id
+)
 
 # TF, SA ----
 # ===========
