@@ -44,9 +44,11 @@ mc1 = moodler:::get_multichoice_one(
 # MC 0 ----
 # =========
 
+source("dev/conn.R")
 q = get_quiz(.con, 80)
 mc0 = moodler:::get_multichoice_multiple(
   conn = q$connection,
   quiz.id = q$settings$quiz.id,
   attempt.id = q$attempts$attempt.id
 )
+
