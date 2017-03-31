@@ -11,24 +11,46 @@
 get_truefalse = function(conn, quiz.id, attempt.id, prefix = "mdl_",
                          suppress.warnings = TRUE) {
 
-  key = get_question_key(
-    conn = conn,
-    question.type = "truefalse",
-    quiz.id = quiz.id,
-    prefix = prefix)
-
+  # SQL queries
   ans = get_question_ans(
     conn = conn,
     question.type = "truefalse",
     attempt.id = attempt.id,
     prefix = prefix)
 
-  ans_tidy = ans %>%
+  key = get_question_key(
+    conn = conn,
+    question.type = "truefalse",
+    question.id = unique(ans$question.id),
+    prefix = prefix)
+
+  # Tidy key
+  key_tidy = key %>%
+    mutate(answer.num = as.numeric(answer.text == "True")) %>%
+    select(question.id, question.text, question.type,
+           answer.text, answer.num, answer.correct = answer.percent)
+
+  key_expanded = expand_key(
+    key = key,
+    attempt.id = unique(ans$attempt.id),
+    include.cols = "question.id"
+  )
+
+  key_num = select(key_tidy, question.id, answer.num)
+
+  # Tidy answer
+  ans_latest = ans %>%
     group_by(attempt.id, question.id) %>%
     filter(answer.time == max(answer.time) | is.na(answer.time)) %>%
-    as.data.frame()
+    ungroup()
 
-  list(key = key, ans = ans_tidy, ans_raw = ans)
+  ans_tidy = ans_latest %>%
+    mutate(answer.num = as.numeric(answer.text == "True")) %>%
+    right_join(key_expanded) %>%
+    left_join(key_num) %>%
+    select(attempt.id, question.id, answer.time, answer.num)
+
+  list(key = key_tidy, ans = ans_tidy)
 }
 
 #' Get shortanswer item data
@@ -44,6 +66,7 @@ get_truefalse = function(conn, quiz.id, attempt.id, prefix = "mdl_",
 get_shortanswer = function(conn, quiz.id, attempt.id, prefix = "mdl_",
                            suppress.warnings = TRUE) {
 
+  # SQL queries
   key = get_question_key(
     conn = conn,
     question.type = "shortanswer",
