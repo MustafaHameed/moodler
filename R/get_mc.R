@@ -38,29 +38,35 @@ get_multichoice_one = function(conn, attempt.id, prefix = "mdl_",
     select(attempt.id, question.id, answer.order, answer.id,
            order.time = answer.time)
 
-  ans_not_blank = ans_given %>%
-    left_join(ans_order, by = c("attempt.id", "question.id")) %>%
-    separate_rows(answer.id, answer.order, convert = TRUE) %>%
-    group_by(attempt.id, question.id) %>%
-    filter(answer.time > order.time, answer.num == answer.order) %>%
-    select(attempt.id, question.id, answer.id, answer.time)
+  # Tidy-up key and include blank answers
+  key_tidy = key %>%
+    group_by(question.id) %>%
+    mutate(answer.correct = as.numeric(answer.percent > 0),
+           answer.num = answer.id - min(answer.id) + 1) %>%
+    select(question.id, answer.id, question.text, question.type,
+           answer.text, answer.num, answer.correct) %>%
+    ungroup()
 
-  # Include blank answers
   key_expanded = expand_key(
     key = key,
     attempt.id = unique(ans$attempt.id),
     include.cols = "question.id")
 
-  ans_tidy = key_expanded %>%
-    left_join(ans_not_blank)
+  key_num = select(key_tidy, question.id, answer.id, answer.num)
 
-  # Key tidy
-  key_tidy = key %>%
-    mutate(answer.correct = as.numeric(answer.percent > 0)) %>%
-    select(question.id, answer.id, question.text, answer.text,
-           answer.correct)
+  # Tidy answers
+  ans_tidy = ans_given %>%
+    left_join(ans_order, by = c("attempt.id", "question.id")) %>%
+    separate_rows(answer.id, answer.order, convert = TRUE) %>%
+    group_by(attempt.id, question.id) %>%
+    filter(answer.time > order.time, answer.num == answer.order) %>%
+    select(attempt.id, question.id, answer.time, answer.id) %>%
+    right_join(key_expanded, by = c("attempt.id", "question.id")) %>%
+    left_join(key_num, by = c("question.id", "answer.id"))
 
-  list(key = key_tidy, ans = ans_tidy)
+  list(ans = select(ans_tidy, -answer.id),
+       key = select(key_tidy, -answer.id)
+  )
 }
 
 #' Get multichocie (multiple answers) item data
@@ -77,13 +83,7 @@ get_multichoice_one = function(conn, attempt.id, prefix = "mdl_",
 get_multichoice_multiple = function(conn, quiz.id, attempt.id, prefix = "mdl_",
                                     suppress.warnings = TRUE) {
 
-  key = get_question_key(
-    conn = conn,
-    question.type = "multichoice_multiple",
-    quiz.id = quiz.id,
-    prefix = prefix,
-    suppress.warnings = suppress.warnings)
-
+  # SQL queries
   ans = get_question_ans(
     conn = conn,
     question.type = "multichoice_multiple",
@@ -91,27 +91,60 @@ get_multichoice_multiple = function(conn, quiz.id, attempt.id, prefix = "mdl_",
     prefix = prefix,
     suppress.warnings = suppress.warnings)
 
-  ans_answer = ans %>%
+  key = get_question_key(
+    conn = conn,
+    question.type = "multichoice_multiple",
+    question.id = unique(ans$question.id),
+    prefix = prefix,
+    suppress.warnings = suppress.warnings)
+
+  # Determine selected
+  ans_given = ans %>%
     filter_latest("grepl('choice[0-9]+', answer.data)") %>%
-    mutate(order.answer = reg_match(answer.data, "[0-9]+"),
-           order.answer = as.numeric(order.answer) + 1) %>%
-    filter(answer.id == "1") %>%
-    select(-c(answer.data, answer.id))
+    mutate(answer.order = as.numeric(reg_match(answer.data, "[0-9]+")) + 1,
+           answer.num = as.numeric(answer.id)) %>%
+    select(attempt.id, question.id, answer.num, answer.order, answer.time)
 
   ans_order = ans %>%
     filter_latest(answer.data = "_order") %>%
-    mutate(order.answer = count_commas(answer.id)) %>%
-    select(attempt.id, question.id, order.answer, answer.id,
+    mutate(answer.order = count_commas(answer.id)) %>%
+    select(attempt.id, question.id, answer.order, answer.id,
            order.time = answer.time) %>%
-    separate_rows(answer.id, order.answer, convert = TRUE)
+    separate_rows(answer.id, answer.order, convert = TRUE)
 
-  ans_tidy = ans_answer %>%
-    left_join(ans_order,
-              by = c("attempt.id", "question.id", "order.answer")) %>%
+  # Tidy-up key and include blank answers
+  key_expanded = expand_key(
+    key = key,
+    attempt.id = unique(ans$attempt.id),
+    include.cols = c("question.id", "answer.id"))
+
+  # Tidy key
+  key_tidy = key %>%
+    mutate(question.id = paste(question.id, answer.id, sep = "/"),
+           question.text = paste(question.text, answer.text, sep = ": "),
+           answer.num = if_else(answer.percent > 0, "1,0", "0,1"),
+           answer.correct = "1,0") %>%
+    separate_rows(answer.num, answer.correct, convert = TRUE) %>%
+    mutate(answer.text = if_else(answer.correct == 1, "True", "False")) %>%
+    select(question.id, question.text, question.type,
+           answer.text, answer.num, answer.correct)
+
+  key_num = select(key_tidy, question.id, answer.num)
+
+  # Tidy-up answers
+  ans_tidy = ans_given %>%
+    left_join(ans_order, by = c("attempt.id", "question.id", "answer.order")) %>%
     group_by(attempt.id, question.id) %>%
-    select(course.id, attempt.id, question.id, question.type,
-           question.maxpoints.past, answer.id, answer.time) %>%
-    as.data.frame()
+    select(attempt.id, question.id, answer.time, answer.id, answer.num) %>%
+    right_join(
+      key_expanded,
+      by = c("attempt.id", "question.id", "answer.id")) %>%
+    ungroup() %>%
+    mutate(question.id = paste(question.id, answer.id, sep = "/")) %>%
+    left_join(key_num, by = c("question.id", "answer.num")) %>%
+    select(-answer.id)
 
-  list(key = key, ans = ans_tidy, ans_raw = ans)
+  list(ans = ans_tidy,
+       key = key_tidy
+  )
 }
