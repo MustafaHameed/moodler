@@ -7,6 +7,8 @@
 #' @param prefix Database table prefix, defaults to \code{"mdl_"}
 #' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
 #' @importFrom DBI dbGetQuery
+#' @importFrom dplyr select_ bind_rows filter_
+#' @importFrom stats setNames
 #' @export
 
 get_quiz = function(conn, quiz.id, attempt.state = "finished",
