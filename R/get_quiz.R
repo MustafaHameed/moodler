@@ -75,6 +75,7 @@ get_quiz = function(conn, quiz.id, attempt.state = "finished",
   attempts$attempt.finish = as.POSIXct(attempts$attempt.finish)
   attempts$attempt.time.taken = as.difftime(attempts$attempt.time.taken,
                                             units = "min")
+  questions$question.text = remove_tags(questions$question.text)
 
   unique_quiz_id = as.character(unique(settings$quiz.id))
 
