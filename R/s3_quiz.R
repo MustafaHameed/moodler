@@ -4,6 +4,7 @@
 #' @param x An object of class \code{"mdl_quiz"}
 #' @param attempt Defaults to \code{"first"}; \code{"all"} and \code{"last"} are also allowed, or a numeric vector specifying attempt IDs
 #' @param question.type Char vector, if \code{NULL}, all items regardless of type will be fetched
+#' @param distractors List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted
 #' @param prefix Defaults to \code{"mdl_"}
 #' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
 #' @param ... Further arguments passed on to methods
@@ -58,8 +59,7 @@ get_module_data.mdl_quiz = function(x, attempt = "first",
           settings = x$settings,
           attempts = x$attempts,
           items = items_tidy),
-        class = "mdl_quiz_data"
-      )
+        class = "mdl_quiz_data")
     )
 
   # Fetch distractor-level data
@@ -124,6 +124,7 @@ get_attempt_id = function(x, attempt = "first") {
 #' Extract key
 #' @param x Object of class \code{"mdl_quiz_data"}
 #' @param distractors List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted
+#' @importFrom dplyr %>% filter select
 #' @export
 
 extract_key.mdl_quiz_data = function(x, distractors = NULL) {
