@@ -1,3 +1,20 @@
+# Standard data.frame
+# This is how data for every item type should look like after import:
+
+# ANSWERS
+# attempt.id [numeric]
+# question.id [numeric/character] -hm...
+# answer.time [POSIXct]
+# answer.num [integer]
+
+# KEY
+# question.id [numeric/character] -hm...
+# question.text [character, values True/False or the actual text]
+# question.type [character]
+# answer.text [character]
+# answer.num [integer]
+# answer.correct [integer]
+
 #' Get Question Key
 #'
 #' Get question key.
@@ -12,7 +29,7 @@ get_question_key = function(conn, question.type, question.id,
                             prefix = "mdl_", suppress.warnings = TRUE) {
 
   if (suppress.warnings) {
-    suppressWarnings(dbGetQuery(
+    key = suppressWarnings(dbGetQuery(
       conn = conn,
       statement = use_query(
         module = "quiz",
@@ -20,7 +37,7 @@ get_question_key = function(conn, question.type, question.id,
         prefix = prefix,
         question.id = question.id)))
   } else {
-    dbGetQuery(
+    key = dbGetQuery(
       conn = conn,
       statement = use_query(
         module = "quiz",
@@ -28,6 +45,9 @@ get_question_key = function(conn, question.type, question.id,
         prefix = prefix,
         question.id = question.id))
   }
+  key$question.text = gsub("(<[^>]+>|&nbsp;)", "", key$question.text)
+  key$answer.text = gsub("(<[^>]+>|&nbsp;)", "", key$answer.text)
+  key
 }
 
 #' Get Question Answer
