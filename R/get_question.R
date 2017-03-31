@@ -45,9 +45,15 @@ get_question_key = function(conn, question.type, question.id,
         prefix = prefix,
         question.id = question.id))
   }
-  key$question.text = gsub("(<[^>]+>|&nbsp;)", "", key$question.text)
-  key$answer.text = gsub("(<[^>]+>|&nbsp;)", "", key$answer.text)
+
+  key$question.text = remove_tags(key$question.text)
+  key$answer.text = remove_tags(key$answer.text)
   key
+}
+
+remove_tags = function(x) {
+  stopifnot(is.character(x))
+  gsub("(<[^>]+>|&nbsp;)", "", x)
 }
 
 #' Get Question Answer
@@ -62,6 +68,9 @@ get_question_key = function(conn, question.type, question.id,
 
 get_question_ans = function(conn, question.type, attempt.id,
                             prefix = "mdl_", suppress.warnings = TRUE) {
+
+  message("Fething: ", question.type)
+
   if (suppress.warnings) {
     ans = suppressWarnings(dbGetQuery(
       conn = conn,
