@@ -5,7 +5,7 @@
 #' @param attempt.id Vector of attempt ids
 #' @param prefix Defaults to \code{"mdl_quiz"}
 #' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
-#' @importFrom dplyr %>% left_join select mutate
+#' @importFrom dplyr %>% left_join right_join select mutate group_by ungroup
 #' @importFrom tidyr separate_rows
 
 get_multichoice_one = function(conn, attempt.id, prefix = "mdl_",
@@ -77,7 +77,7 @@ get_multichoice_one = function(conn, attempt.id, prefix = "mdl_",
 #' @param attempt.id Vector of attempt ids
 #' @param prefix Defaults to \code{"mdl_quiz"}
 #' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
-#' @importFrom dplyr %>% left_join select mutate
+#' @importFrom dplyr %>% left_join select mutate group_by ungroup right_join
 #' @importFrom tidyr separate_rows
 
 get_multichoice_multiple = function(conn, quiz.id, attempt.id, prefix = "mdl_",
@@ -141,7 +141,9 @@ get_multichoice_multiple = function(conn, quiz.id, attempt.id, prefix = "mdl_",
       by = c("attempt.id", "question.id", "answer.id")) %>%
     ungroup() %>%
     mutate(question.id = paste(question.id, answer.id, sep = "/")) %>%
-    left_join(key_num, by = c("question.id", "answer.num")) %>%
+    left_join(
+      key_num,
+      by = c("question.id", "answer.num")) %>%
     select(-answer.id)
 
   list(ans = ans_tidy,
