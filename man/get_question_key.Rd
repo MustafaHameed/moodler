@@ -4,7 +4,7 @@
 \alias{get_question_key}
 \title{Get Question Key}
 \usage{
-get_question_key(conn, question.type, quiz.id, prefix = "mdl_",
+get_question_key(conn, question.type, question.id, prefix = "mdl_",
   suppress.warnings = TRUE)
 }
 \arguments{
@@ -12,7 +12,7 @@ get_question_key(conn, question.type, quiz.id, prefix = "mdl_",
 
 \item{question.type}{Char vector}
 
-\item{quiz.id}{Numeric vector}
+\item{question.id}{Numeric vector}
 
 \item{prefix}{Defaults to \code{"mdl_quiz"}}
 

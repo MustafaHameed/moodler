@@ -4,13 +4,11 @@
 \alias{get_multichoice_one}
 \title{Get multichocie (one answer) item data}
 \usage{
-get_multichoice_one(conn, quiz.id, attempt.id, prefix = "mdl_",
+get_multichoice_one(conn, attempt.id, prefix = "mdl_",
   suppress.warnings = TRUE)
 }
 \arguments{
 \item{conn}{Connection object}
-
-\item{quiz.id}{Numeric vector of length 1}
 
 \item{attempt.id}{Vector of attempt ids}
 

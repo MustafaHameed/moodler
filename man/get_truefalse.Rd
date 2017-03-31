@@ -4,13 +4,10 @@
 \alias{get_truefalse}
 \title{Get truefalse item data}
 \usage{
-get_truefalse(conn, quiz.id, attempt.id, prefix = "mdl_",
-  suppress.warnings = TRUE)
+get_truefalse(conn, attempt.id, prefix = "mdl_", suppress.warnings = TRUE)
 }
 \arguments{
 \item{conn}{Connection object}
-
-\item{quiz.id}{Numeric vector of length 1}
 
 \item{attempt.id}{Vector of attempt ids}
 

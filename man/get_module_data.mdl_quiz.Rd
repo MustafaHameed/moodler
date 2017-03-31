@@ -5,7 +5,8 @@
 \title{Get Quiz Data}
 \usage{
 \method{get_module_data}{mdl_quiz}(x, attempt = "first",
-  question.type = NULL, prefix = "mdl_", suppress.warnings = TRUE, ...)
+  question.type = NULL, distractors = TRUE, prefix = "mdl_",
+  suppress.warnings = TRUE, ...)
 }
 \arguments{
 \item{x}{An object of class \code{"mdl_quiz"}}
@@ -13,6 +14,8 @@
 \item{attempt}{Defaults to \code{"first"}; \code{"all"} and \code{"last"} are also allowed, or a numeric vector specifying attempt IDs}
 
 \item{question.type}{Char vector, if \code{NULL}, all items regardless of type will be fetched}
+
+\item{distractors}{List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted}
 
 \item{prefix}{Defaults to \code{"mdl_"}}
 
