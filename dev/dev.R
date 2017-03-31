@@ -17,13 +17,14 @@ mc0 = get_module_data(q, question.type = "multichoice_multiple")
 # TF, SA ----
 # ===========
 
+source("dev/conn.R")
 q = get_quiz(.con, 74)
 tf = moodler:::get_truefalse(
   conn = q$connection,
-  quiz.id = q$settings$quiz.id,
-  attempt.id = c(2514, 2533)
+  attempt.id = q$attempts$attempt.id
 )
 
+source("dev/conn.R")
 q = get_quiz(.con, 79)
 sa = moodler:::get_shortanswer(
   conn = q$connection,
