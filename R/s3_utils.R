@@ -31,6 +31,6 @@ get_module_data = function(x, ...)
 #' @param distractors List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted
 #' @export
 
-extract_key = function(x)
+extract_key = function(x, distractors = NULL)
   UseMethod("extract_key")
 
