@@ -49,7 +49,7 @@ get_multichoice_one = function(conn, attempt.id, prefix = "mdl_",
 
   key_expanded = expand_key(
     key = key,
-    attempt.id = unique(ans$attempt.id),
+    attempt.id = attempt.id,
     include.cols = "question.id")
 
   key_num = select(key_tidy, question.id, answer.id, answer.num)
@@ -115,7 +115,7 @@ get_multichoice_multiple = function(conn, quiz.id, attempt.id, prefix = "mdl_",
   # Tidy-up key and include blank answers
   key_expanded = expand_key(
     key = key,
-    attempt.id = unique(ans$attempt.id),
+    attempt.id = attempt.id,
     include.cols = c("question.id", "answer.id"))
 
   # Tidy key

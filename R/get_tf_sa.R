@@ -31,7 +31,7 @@ get_truefalse = function(conn, attempt.id, prefix = "mdl_",
 
   key_expanded = expand_key(
     key = key,
-    attempt.id = unique(ans$attempt.id),
+    attempt.id = attempt.id,
     include.cols = "question.id"
   )
 
@@ -90,7 +90,7 @@ get_shortanswer = function(conn, quiz.id, attempt.id, prefix = "mdl_",
 
   key_expanded = expand_key(
     key = key,
-    attempt.id = unique(ans$attempt.id),
+    attempt.id = attempt.id,
     include.cols = "question.id"
   )
 
