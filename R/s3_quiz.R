@@ -145,3 +145,93 @@ extract_key.mdl_quiz_data = function(x, distractors = NULL) {
 
   unlist(all_keys)
 }
+
+#' Extract item-level and distractor data
+#'
+#' Extract a matrix or data.frame of question marks
+#'
+#' Extract item marks either as binary (correct/incorrect) or categorical data (for multiplechoice questions). If the test contains a mixture of binary and categorical items (such as truefalse and multichoice), than \code{marks = "binary"} will collapse multiple choice items into correct/incorrect (1/0). When using \code{marks = "categorical"}, mutliplechoice options will be preserved but a key needs to be obtained (see for details). Raw percentages as they appear in Moodle can also be extracted by \code{marks = "moodle"}.
+#' @param x An object of class \code{"mdl_quiz_data"}
+#' @param marks Char, defaults to "categorical"
+#' @param fill What to use to fill missing values, defaults to \code{NA}
+#' @param mat If \code{TRUE} (default), the result will be a \code{matrix} otherwise a \code{data.frame}
+#' @importFrom dplyr %>% select left_join
+#' @importFrom tidyr spread
+#' @export
+
+extract_items.mdl_quiz_data = function(x, marks = "categorical", fill = NA,
+                                       mat = TRUE) {
+
+  stopifnot(marks %in% c("categorical", "binary", "moodle"))
+
+  marks_df = switch(
+    marks,
+    categorical = spread_cat(
+      dist_data = x$distractors,
+      fill = fill
+    ),
+    binary = spread_bin(
+      dist_data = x$distractors,
+      fill = fill
+    ),
+    moodle = spread_moodle(
+      item_data = x$items,
+      fill = fill
+    )
+  )
+
+  if (mat) {
+    rownames(marks_df) = marks_df$attempt.id
+    as.matrix(marks_df[-1])
+  } else {
+    marks_df
+  }
+
+}
+
+spread_moodle = function(item_data, fill = NA) {
+
+  item_data %>%
+    select(attempt.id, question.id, answer.percent) %>%
+    spread(
+      key = question.id,
+      value = answer.percent,
+      convert = TRUE,
+      fill = fill)
+}
+
+spread_cat = function(dist_data, fill = NA) {
+
+  marks_list = lapply(dist_data, function(this) {
+    this$ans %>%
+      select(attempt.id, question.id, answer.num) %>%
+      spread(
+        key = question.id,
+        value = answer.num,
+        convert = TRUE,
+        fill = fill)
+  })
+
+  suppressMessages(
+    as.data.frame(Reduce(left_join, marks_list))
+  )
+}
+
+spread_bin = function(dist_data, fill = NA) {
+
+  marks_list = lapply(dist_data, function(this) {
+    this_ans = select(this$ans, attempt.id, question.id, answer.num)
+    this_key = select(this$key, question.id, answer.num, answer.correct)
+    left_join(this_ans, this_key) %>%
+      select(-answer.num) %>%
+      spread(
+        key = question.id,
+        value = answer.correct,
+        convert = TRUE,
+        fill = fill)
+  })
+
+  suppressMessages(
+    as.data.frame(Reduce(left_join, marks_list))
+  )
+}
