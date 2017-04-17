@@ -29,7 +29,7 @@ a = moodler:::get_question_ans(
 # ===========
 
 source("dev/conn.R")
-q = get_quiz(.con, 73)
+q = get_quiz(.con, 79)
 tf = moodler:::get_truefalse(
   conn = q$connection,
   attempt.id = q$attempts$attempt.id
@@ -64,3 +64,16 @@ mc0 = moodler:::get_multichoice_multiple(
   attempt.id = q$attempts$attempt.id
 )
 
+# Vikings ----
+# ============
+
+source("dev/conn.R")
+
+vik = get_quiz(conn = .con, quiz.id = 79)
+qst = c("multichoice_multiple", "multichoice_one", "shortanswer", "truefalse")
+dat = get_module_data(vik, question.type = NULL)
+
+mdl = extract_items(dat, marks = "moodle")
+bin = extract_items(dat, marks = "binary")
+cat = extract_items(dat, marks = "categorical")
+key = extract_key(dat)
