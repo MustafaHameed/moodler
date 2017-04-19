@@ -1,8 +1,8 @@
 SELECT
 
 -- id/name/type
-  f.course AS 'course.id',
   cm.id AS 'forum.id',
+  f.course AS 'course.id',
   f.name AS 'forum.name',
   f.type AS 'forum.type',
   
@@ -28,4 +28,6 @@ FROM [prefix]forum AS f
 JOIN [prefix]course_modules AS cm
   ON f.course = cm.course AND f.id = cm.instance
 
-WHERE cm.id IN ([module.id]);
+WHERE cm.id IN ([module.id])
+
+ORDER BY f.id, f.course, f.type;
