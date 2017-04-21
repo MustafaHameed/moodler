@@ -60,7 +60,7 @@ get_truefalse = function(conn, attempt.id, prefix = "mdl_",
 #' @param attempt.id Vector of attempt ids
 #' @param prefix Defaults to \code{"mdl_quiz"}
 #' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
-#' @importFrom dplyr %>% left_join select mutate
+#' @importFrom dplyr %>% left_join select mutate if_else
 
 get_shortanswer = function(conn, quiz.id, attempt.id, prefix = "mdl_",
                            suppress.warnings = TRUE) {
