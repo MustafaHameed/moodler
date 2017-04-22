@@ -25,7 +25,7 @@ get_truefalse = function(conn, attempt.id, prefix = "mdl_",
 
   # Tidy key
   key_tidy = key %>%
-    mutate(answer.num = rep(0:1, n()/2)) %>%
+    mutate(answer.num = rep(1:0, n()/2)) %>%
     select(question.id, question.text, question.type,
            answer.text, answer.num, answer.correct = answer.percent)
 

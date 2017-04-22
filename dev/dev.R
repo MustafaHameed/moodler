@@ -29,8 +29,8 @@ a = moodler:::get_question_ans(
 # ===========
 
 source("dev/conn.R")
-q = get_quiz(.con, 79)
-tf = moodler:::get_truefalse(
+q = get_quiz(.con, 40)
+tf40 = moodler:::get_truefalse(
   conn = q$connection,
   attempt.id = q$attempts$attempt.id
 )
