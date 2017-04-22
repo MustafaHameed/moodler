@@ -22,7 +22,7 @@ SELECT
   END AS 'question.type',
   que.name AS 'question.name',
   que.questiontext AS 'question.text',
-  qs.maxmark AS 'q.maxpoints'
+  qs.maxmark AS 'question.maxpoints'
 
 FROM [prefix]quiz AS q
 JOIN [prefix]course_modules AS cm
