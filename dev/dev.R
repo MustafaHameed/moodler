@@ -1,3 +1,10 @@
+# Explore ----
+# ============
+
+source("dev/conn.R")
+clist = get_courses(.con)
+mlist = get_course_modules(.con, 3)
+
 # Module data fetching ----
 # =========================
 
