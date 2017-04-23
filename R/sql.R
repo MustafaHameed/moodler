@@ -25,7 +25,7 @@ insert_values = function(query, fields, prefix, ...) {
 
   if (!all(fields %in% names(dots)))
     stop(
-      "Missing replacement for: ",
+      "Please specify: ",
       paste(fields[!fields %in% names(dots)], collapse = " "),
       call. = FALSE)
 
@@ -42,7 +42,7 @@ insert_values = function(query, fields, prefix, ...) {
 paste_sql = function(x, x.name) {
   if (any(is.numeric(x), is.double(x)))
     paste(x, collapse = ",")
-  else if (x.name == "prefix")
+  else if (x.name %in% c("prefix", "module.type"))
     x
   else
     paste(paste("'", x, "'", sep = ""), collapse = ",")
