@@ -1,6 +1,6 @@
 SELECT
 
-  module.id AS 'module.id',
+  module.id AS 'module.instance',
   module.name AS 'module.name',
   module.course AS 'course.id'
 
