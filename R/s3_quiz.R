@@ -123,17 +123,19 @@ get_attempt_id = function(x, attempt = "first") {
 #'
 #' Extract key
 #' @param x Object of class \code{"mdl_quiz_data"}
-#' @param distractors List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted
+#' @param question.type List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted
 #' @importFrom dplyr %>% filter select
 #' @export
 
-extract_key.mdl_quiz_data = function(x, distractors = NULL) {
+extract_key.mdl_quiz_data = function(x, question.type = NULL) {
 
-  if (is.null(distractors))
-    distractors = names(x$distractors)
+  if (is.null(question.type))
+    question.type = names(x$distractors)
+  else
+    stopifnot(all(question.type %in% names(x$distractors)))
 
-  all_keys = lapply(
-    X = distractors,
+  keys = lapply(
+    X = question.type,
     FUN = function(this_dist) {
       key_num = x$distractors[[this_dist]]$key %>%
         filter(answer.correct == 1) %>%
@@ -143,7 +145,7 @@ extract_key.mdl_quiz_data = function(x, distractors = NULL) {
         names = key_num$question.id
       )})
 
-  unlist(all_keys)
+  unlist(keys)
 }
 
 #' Extract item-level and distractor data
@@ -159,7 +161,8 @@ extract_key.mdl_quiz_data = function(x, distractors = NULL) {
 #' @importFrom tidyr spread
 #' @export
 
-extract_items.mdl_quiz_data = function(x, marks = "categorical", fill = NA,
+extract_items.mdl_quiz_data = function(x, marks = "categorical",
+                                       question.type = NULL, fill = NA,
                                        mat = TRUE) {
 
   stopifnot(marks %in% c("categorical", "binary", "moodle"))
@@ -168,6 +171,7 @@ extract_items.mdl_quiz_data = function(x, marks = "categorical", fill = NA,
     marks,
     categorical = spread_cat(
       dist_data = x$distractors,
+      question.type = question.type,
       fill = fill
     ),
     binary = spread_bin(
@@ -200,10 +204,19 @@ spread_moodle = function(item_data, fill = NA) {
       fill = fill)
 }
 
-spread_cat = function(dist_data, fill = NA) {
+spread_cat = function(dist_data, question.type = NULL,
+                      fill = NA) {
 
-  marks_list = lapply(dist_data, function(this) {
-    this$ans %>%
+  stopifnot(all(question.type %in% names(dist_data)))
+
+  if (is.null(question.type))
+    question.type = names(dist_data)
+  else
+    stopifnot(all(question.type %in% names(dist_data)))
+
+  marks_list = lapply(
+    X = question.type, FUN = function(this_type) {
+    dist_data[[this_type]]$ans %>%
       select(attempt.id, question.id, answer.num) %>%
       spread(
         key = question.id,

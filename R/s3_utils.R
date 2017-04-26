@@ -31,7 +31,7 @@ get_module_data = function(x, ...)
 #' @param distractors List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted
 #' @export
 
-extract_key = function(x, distractors = NULL)
+extract_key = function(x, question.type = NULL)
   UseMethod("extract_key")
 
 #' Extract item-level and distractor data
@@ -41,11 +41,13 @@ extract_key = function(x, distractors = NULL)
 #' Extract item marks either as binary (correct/incorrect) or categorical data (for multiplechoice questions). If the test contains a mixture of binary and categorical items (such as truefalse and multichoice), than \code{marks = "binary"} will collapse multiple choice items into correct/incorrect (1/0). When using \code{marks = "categorical"}, mutliplechoice options will be preserved but a key needs to be obtained (see for details). Raw percentages as they appear in Moodle can also be extracted by \code{marks = "moodle"}.
 #' @param x An object of class \code{"mdl_quiz_data"}
 #' @param marks Char, defaults to "categorical"
+#' @param question.type List or char vector of question types
 #' @param fill What to use to fill missing values, defaults to \code{NA}
 #' @param mat If \code{TRUE} (default), the result will be a \code{matrix} otherwise a \code{data.frame}
 #' @importFrom dplyr %>% select left_join
 #' @importFrom tidyr spread
 #' @export
 
-extract_items = function(x, marks = "categorical", fill = NA, mat = TRUE)
+extract_items = function(x, marks = "categorical", question.type = NULL,
+                         fill = NA, mat = TRUE)
   UseMethod("extract_items")

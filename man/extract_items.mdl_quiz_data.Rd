@@ -4,8 +4,8 @@
 \alias{extract_items.mdl_quiz_data}
 \title{Extract item-level and distractor data}
 \usage{
-\method{extract_items}{mdl_quiz_data}(x, marks = "categorical", fill = NA,
-  mat = TRUE)
+\method{extract_items}{mdl_quiz_data}(x, marks = "categorical",
+  question.type = NULL, fill = NA, mat = TRUE)
 }
 \arguments{
 \item{x}{An object of class \code{"mdl_quiz_data"}}

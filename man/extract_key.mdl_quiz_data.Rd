@@ -4,12 +4,12 @@
 \alias{extract_key.mdl_quiz_data}
 \title{Extract key}
 \usage{
-\method{extract_key}{mdl_quiz_data}(x, distractors = NULL)
+\method{extract_key}{mdl_quiz_data}(x, question.type = NULL)
 }
 \arguments{
 \item{x}{Object of class \code{"mdl_quiz_data"}}
 
-\item{distractors}{List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted}
+\item{question.type}{List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted}
 }
 \description{
 Extract key

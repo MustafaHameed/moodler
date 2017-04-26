@@ -4,12 +4,15 @@
 \alias{extract_items}
 \title{Extract item-level and distractor data}
 \usage{
-extract_items(x, marks = "categorical", fill = NA, mat = TRUE)
+extract_items(x, marks = "categorical", question.type = NULL, fill = NA,
+  mat = TRUE)
 }
 \arguments{
 \item{x}{An object of class \code{"mdl_quiz_data"}}
 
 \item{marks}{Char, defaults to "categorical"}
+
+\item{question.type}{List or char vector of question types}
 
 \item{fill}{What to use to fill missing values, defaults to \code{NA}}
 
