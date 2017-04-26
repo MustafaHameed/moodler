@@ -12,6 +12,8 @@
 
 \item{marks}{Char, defaults to "categorical"}
 
+\item{question.type}{List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted}
+
 \item{fill}{What to use to fill missing values, defaults to \code{NA}}
 
 \item{mat}{If \code{TRUE} (default), the result will be a \code{matrix} otherwise a \code{data.frame}}

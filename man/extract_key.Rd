@@ -9,7 +9,9 @@ extract_key(x, question.type = NULL, complete = FALSE)
 \arguments{
 \item{x}{An object of class \code{"mdl_quiz_data"}}
 
-\item{distractors}{List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted}
+\item{question.type}{List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted}
+
+\item{complete}{Should question name, text etc. be provided? Returns a \code{data.frame}}
 }
 \description{
 Extract key (only when distractor data are available).

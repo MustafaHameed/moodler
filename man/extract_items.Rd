@@ -12,7 +12,7 @@ extract_items(x, marks = "categorical", question.type = NULL, fill = NA,
 
 \item{marks}{Char, defaults to "categorical"}
 
-\item{question.type}{List or char vector of question types}
+\item{question.type}{List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted}
 
 \item{fill}{What to use to fill missing values, defaults to \code{NA}}
 
