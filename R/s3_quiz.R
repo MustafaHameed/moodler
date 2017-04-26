@@ -127,12 +127,20 @@ get_attempt_id = function(x, attempt = "first") {
 #' @importFrom dplyr %>% filter select
 #' @export
 
-extract_key.mdl_quiz_data = function(x, question.type = NULL) {
+extract_key.mdl_quiz_data = function(x, question.type = NULL,
+                                     complete = FALSE) {
 
   if (is.null(question.type))
     question.type = names(x$distractors)
   else
     stopifnot(all(question.type %in% names(x$distractors)))
+
+  if (complete) {
+    keys = lapply(
+      X = question.type, FUN = function(this_dist) {
+        x$distractors[[this_dist]]$key})
+    return(do.call("rbind", keys))
+  }
 
   keys = lapply(
     X = question.type,
@@ -176,6 +184,7 @@ extract_items.mdl_quiz_data = function(x, marks = "categorical",
     ),
     binary = spread_bin(
       dist_data = x$distractors,
+      question.type = question.type,
       fill = fill
     ),
     moodle = spread_moodle(
@@ -230,19 +239,29 @@ spread_cat = function(dist_data, question.type = NULL,
   )
 }
 
-spread_bin = function(dist_data, fill = NA) {
+spread_bin = function(dist_data, question.type = NULL, fill = NA) {
 
-  marks_list = lapply(dist_data, function(this) {
-    this_ans = select(this$ans, attempt.id, question.id, answer.num)
-    this_key = select(this$key, question.id, answer.num, answer.correct)
-    left_join(this_ans, this_key) %>%
-      select(-answer.num) %>%
-      spread(
-        key = question.id,
-        value = answer.correct,
-        convert = TRUE,
-        fill = fill)
-  })
+  stopifnot(all(question.type %in% names(dist_data)))
+
+  if (is.null(question.type))
+    question.type = names(dist_data)
+  else
+    stopifnot(all(question.type %in% names(dist_data)))
+
+  marks_list = lapply(
+    X = question.type, FUN = function(this_type) {
+      this_ans = select(dist_data[[this_type]]$ans,
+                        attempt.id, question.id, answer.num)
+      this_key = select(dist_data[[this_type]]$key,
+                        question.id, answer.num, answer.correct)
+      left_join(this_ans, this_key) %>%
+        select(-answer.num) %>%
+        spread(
+          key = question.id,
+          value = answer.correct,
+          convert = TRUE,
+          fill = fill)
+    })
 
   suppressMessages(
     as.data.frame(Reduce(left_join, marks_list))

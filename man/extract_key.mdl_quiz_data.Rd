@@ -4,7 +4,8 @@
 \alias{extract_key.mdl_quiz_data}
 \title{Extract key}
 \usage{
-\method{extract_key}{mdl_quiz_data}(x, question.type = NULL)
+\method{extract_key}{mdl_quiz_data}(x, question.type = NULL,
+  complete = FALSE)
 }
 \arguments{
 \item{x}{Object of class \code{"mdl_quiz_data"}}
