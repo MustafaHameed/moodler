@@ -4,6 +4,13 @@
 source("dev/conn.R")
 clist = get_courses(.con)
 mlist = get_course_modules(.con, 3)
+q = get_quiz(.con, 40)
+qd = get_module_data(q)
+
+qk = extract_key(qd, question.type = "truefalse", complete = TRUE)
+qm = extract_items(qd, question.type = "truefalse")
+qm = extract_items(qd, question.type = "truefalse", marks = "binary")
+
 
 # Module data fetching ----
 # =========================
