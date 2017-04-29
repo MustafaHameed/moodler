@@ -47,10 +47,9 @@ get_module_data.mdl_quiz = function(x, attempt = "first",
   items_tidy = items %>%
     select(attempt.id, question.id, answer.time, answer.percent) %>%
     left_join(x$questions, by = "question.id") %>%
-    select(attempt.id,
-           question.type, question.id, question.name, question.text,
-           page.number, slot.number,
-           answer.time, answer.percent)
+    select(attempt.id, question.type, question.id, question.name, question.text,
+           question.maxpoints, page.number, slot.number, answer.time,
+           answer.percent)
 
   if (!distractors)
     return(
@@ -128,7 +127,7 @@ get_attempt_id = function(x, attempt = "first") {
 #' @importFrom dplyr %>% filter select
 #' @export
 
-extract_key.mdl_quiz_data = function(x, question.type = NULL,
+quiz_key.mdl_quiz_data = function(x, question.type = NULL,
                                      complete = FALSE) {
 
   if (is.null(question.type))
@@ -161,7 +160,7 @@ extract_key.mdl_quiz_data = function(x, question.type = NULL,
 #'
 #' Extract a matrix or data.frame of question marks
 #'
-#' Extract item marks either as binary (correct/incorrect) or categorical data (for multiplechoice questions). If the test contains a mixture of binary and categorical items (such as truefalse and multichoice), than \code{marks = "binary"} will collapse multiple choice items into correct/incorrect (1/0). When using \code{marks = "categorical"}, mutliplechoice options will be preserved but a key needs to be obtained (see for details). Raw percentages as they appear in Moodle can also be extracted by \code{marks = "moodle"}.
+#' Extract item marks either as binary (correct/incorrect) or categorical data (for multiplechoice questions). If the test contains a mixture of binary and categorical items (such as truefalse and multichoice), than \code{marks = "binary"} will collapse multiple choice items into correct/incorrect (1/0). When using \code{marks = "categorical"}, mutliplechoice options will be preserved but a key needs to be obtained (see \code{\link{quiz_key}} for details). Weighted percentages can also be extracted by \code{marks = "weighted"} - in this case, each item's contribution will be weighted by its nominal weight, set in the quiz edit page in Moodle. Finally, you can obtain nominal weights as they appear on the edit quiz page, using \code{marks = "nominal"}.
 #' @param x An object of class \code{"mdl_quiz_data"}
 #' @param marks Char, defaults to "categorical"
 #' @param question.type List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted
@@ -171,11 +170,12 @@ extract_key.mdl_quiz_data = function(x, question.type = NULL,
 #' @importFrom tidyr spread
 #' @export
 
-extract_items.mdl_quiz_data = function(x, marks = "categorical",
+quiz_items.mdl_quiz_data = function(x, marks = "categorical",
                                        question.type = NULL, fill = NA,
                                        mat = TRUE) {
 
-  stopifnot(marks %in% c("categorical", "binary", "moodle"))
+  stopifnot(marks %in% c("categorical", "binary", "percent", "weighted",
+                         "nominal"))
 
   marks_df = switch(
     marks,
@@ -189,7 +189,15 @@ extract_items.mdl_quiz_data = function(x, marks = "categorical",
       question.type = question.type,
       fill = fill
     ),
-    moodle = spread_moodle(
+    percent = spread_perc(
+      item_data = x$items,
+      fill = fill
+    ),
+    weighted = spread_weighted(
+      item_data = x$items,
+      fill = fill
+    ),
+    nominal = spread_nominal(
       item_data = x$items,
       fill = fill
     )
@@ -201,10 +209,34 @@ extract_items.mdl_quiz_data = function(x, marks = "categorical",
   } else {
     marks_df
   }
-
 }
 
-spread_moodle = function(item_data, fill = NA) {
+spread_weighted = function(item_data, fill = NA) {
+
+  item_data %>%
+    mutate(answer.points = answer.percent * question.maxpoints,
+           answer.percent = answer.points / max(question.maxpoints)) %>%
+    select(attempt.id, question.id, answer.percent) %>%
+    spread(
+      key = question.id,
+      value = answer.percent,
+      convert = TRUE,
+      fill = fill)
+}
+
+spread_nominal = function(item_data, fill = NA) {
+
+  item_data %>%
+    mutate(answer.points = answer.percent * question.maxpoints) %>%
+    select(attempt.id, question.id, answer.points) %>%
+    spread(
+      key = question.id,
+      value = answer.points,
+      convert = TRUE,
+      fill = fill)
+}
+
+spread_perc = function(item_data, fill = NA) {
 
   item_data %>%
     select(attempt.id, question.id, answer.percent) %>%
@@ -256,7 +288,7 @@ spread_bin = function(dist_data, question.type = NULL, fill = NA) {
                         attempt.id, question.id, answer.num)
       this_key = select(dist_data[[this_type]]$key,
                         question.id, answer.num, answer.correct)
-      left_join(this_ans, this_key) %>%
+      left_join(this_ans, this_key, by = c("question.id", "answer.num")) %>%
         select(-answer.num) %>%
         spread(
           key = question.id,
@@ -269,3 +301,32 @@ spread_bin = function(dist_data, question.type = NULL, fill = NA) {
     as.data.frame(Reduce(left_join, marks_list))
   )
 }
+
+#' Extract whole-quiz scores
+#'
+#' Extract whole-quiz scores for each attempt.
+#'
+#' See \code{\link{quiz_items}} on how the item marks can be specified.
+#' @param x An object of class \code{"mdl_quiz_data"}
+#' @param marks How items should be graded; see \code{\link{quiz_items}} for details
+#' @export
+
+quiz_scores.mdl_quiz_data = function(x, marks = "binary") {
+
+  if (marks == "categorical") {
+    warning("Don't know how to use categorical marks - using binary instead")
+    marks = "binary"
+  }
+
+  items = quiz_items(x, marks = marks, mat = FALSE)
+  items %>% mutate(score = rowSums(.[, -1], na.rm = TRUE)) %>%
+    select(attempt.id, score)
+}
+
+# tercile = function(x, labels = c("lower", "middle", "upper")) {
+#   q3 = unique(quantile(x, probs = c(1/3, 2/3)))
+#   if (length(q3) == 2)
+#     cut(x, breaks = c(-Inf, q3, Inf), labels = labels)
+#   else
+#     cut(x, breaks = c(-Inf, q3, Inf), labels = labels[c(1, 3)])
+# }

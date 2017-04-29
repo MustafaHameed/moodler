@@ -7,10 +7,13 @@ mlist = get_course_modules(.con, 3)
 q = get_quiz(.con, 40)
 qd = get_module_data(q)
 
-qk = extract_key(qd, question.type = "truefalse", complete = TRUE)
-qm = extract_items(qd, question.type = "truefalse")
-qm = extract_items(qd, question.type = "truefalse", marks = "binary")
+qk = quiz_key(qd, question.type = "truefalse", complete = TRUE)
+qm = quiz_items(qd, question.type = "truefalse")
+qm = quiz_items(qd, question.type = "truefalse", marks = "binary")
+head(quiz_items(qd, marks = "nominal"), 8)
+head(quiz_scores(qd))
 
+DBI::dbGetQuery(.con, 'SHOW VARIABLES WHERE Variable_Name LIKE "%dir"')
 
 # Module data fetching ----
 # =========================
