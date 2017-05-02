@@ -9,7 +9,9 @@ SELECT
   quea.minfraction AS 'question.mingrade',
 
   -- Answer related
-  CASE queasd.VALUE WHEN 0 THEN 'False' ELSE 'True' END AS 'answer.text', # Tj. co uživatel zvybral jako odpověď.
+  queasd.name AS 'answer.data',  
+  CASE queasd.VALUE WHEN 0 THEN 'False' ELSE 'True' END AS 'answer.text',
+  queas.fraction AS 'answer.percent',
   FROM_UNIXTIME(queas.timecreated) AS 'answer.time'
 
 FROM [prefix]quiz_attempts AS quiza
@@ -23,7 +25,7 @@ JOIN [prefix]question_attempt_step_data AS queasd
   ON queasd.attemptstepid = queas.id
 
 WHERE quiza.preview = 0 AND
-      queasd.name = 'answer' AND
+      queasd.name IN ('answer','-comment') AND
       que.qtype = 'truefalse' AND
       quiza.id IN ([attempt.id])
 

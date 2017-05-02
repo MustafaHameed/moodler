@@ -11,6 +11,7 @@ SELECT
   -- Answer related
   queasd.name AS 'answer.data',
   queasd.VALUE AS 'answer.id',
+  queas.fraction AS 'answer.percent',  
   FROM_UNIXTIME(queas.timecreated) AS 'answer.time'
 
 FROM [prefix]quiz_attempts AS quiza
@@ -26,7 +27,7 @@ JOIN [prefix]question_attempt_step_data AS queasd
   ON queasd.attemptstepid = queas.id
 
 WHERE quiza.preview = 0 AND
-      (queasd.name = '_order' OR queasd.name LIKE 'choice%') AND
+      (queasd.name IN ('_order','-comment') OR queasd.name LIKE 'choice%') AND
       que.qtype = 'multichoice' AND qmu.single = 0 AND # 0 = multichoice_multiple
       quiza.id IN ([attempt.id])
 

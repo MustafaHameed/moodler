@@ -25,7 +25,7 @@ JOIN [prefix]question_attempt_step_data AS queasd
   ON queasd.attemptstepid = queas.id
 
 WHERE quiza.preview = 0 AND
-      queasd.name IN ('answer','-finish') AND
+      queasd.name IN ('answer','-finish','-comment') AND
       que.qtype = 'shortanswer' AND
       quiza.id IN ([attempt.id])
 

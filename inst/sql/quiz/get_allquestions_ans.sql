@@ -18,7 +18,8 @@ SELECT
   quea.minfraction AS 'question.mingrade',
   
   -- Answer related
-  queas.fraction AS 'answer.percent',                 # Procento získaných bodů za úlohu
+  queas.fraction AS 'answer.percent',
+  queas.state AS 'grade.state',
   FROM_UNIXTIME(queas.timecreated) AS 'answer.time'
 
 FROM [prefix]quiz_attempts AS quiza
@@ -30,7 +31,7 @@ JOIN [prefix]question_attempt_steps AS queas
   ON queas.questionattemptid = quea.id
 
 WHERE quiza.preview = 0 AND
-      queas.state IN ('gradedright', 'gradedwrong', 'gradedpartial') AND
+      queas.state IN ('gradedright', 'gradedwrong', 'gradedpartial', 'mangrright', 'mangrwrong', 'mangrpartial') AND
       quiza.id IN ([attempt.id])
 
 ORDER BY quiza.quiz, quiza.userid, quiza.id, quea.questionid, queas.timecreated;

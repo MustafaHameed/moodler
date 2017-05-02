@@ -11,6 +11,7 @@ SELECT
   -- Answer related
   queasd.name AS 'answer.data',
   queasd.VALUE AS 'answer.text',
+  queas.fraction AS 'answer.percent',  
   FROM_UNIXTIME(queas.timecreated) AS 'answer.time'
   
 
@@ -25,7 +26,7 @@ JOIN [prefix]question_attempt_step_data AS queasd
   ON queasd.attemptstepid = queas.id
 
 WHERE quiza.preview = 0 AND
-      (queasd.name = 'answer' OR queasd.name = '_separators' OR queasd.name LIKE '_var_%') AND
+      (queasd.name IN ('answer','_separators', '-comment') OR queasd.name LIKE '_var_%') AND
       que.qtype = 'calculated' AND
       quiza.id IN ([attempt.id])
 
