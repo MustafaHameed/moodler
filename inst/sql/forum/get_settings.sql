@@ -18,7 +18,7 @@ SELECT
   f.assessed AS 'forum.assessed',  # Is this an assessed forum (0 = no, 1+ = yes )
   f.completionposts AS 'posts.required', # Certain number of posts is required to complete this activity.
   f.completionreplies AS 'replies.required',
-  f.completiondiscussions AS 'discussions.required'
+  f.completiondiscussions AS 'discussions.required',
 
 -- forum modified
 	FROM_UNIXTIME(f.timemodified) AS 'forum.timemodified'
