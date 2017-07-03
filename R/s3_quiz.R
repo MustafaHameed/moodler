@@ -1,6 +1,6 @@
 #' Get Quiz Data
 #'
-#' Fetch item data from quiz.
+#' Fetch item data from a quiz.
 #' @param x An object of class \code{"mdl_quiz"}
 #' @param attempt Defaults to \code{"first"}; \code{"all"} and \code{"last"} are also allowed, or a numeric vector specifying attempt IDs
 #' @param question.type Char vector, if \code{NULL}, all items regardless of type will be fetched
@@ -124,7 +124,7 @@ get_attempt_id = function(x, attempt = "first") {
 #' @param x Object of class \code{"mdl_quiz_data"}
 #' @param question.type List of distractors for to get key for; if \code{NULL} (the default) all keys will be extracted
 #' @param complete Should question name, text etc. be provided? Returns a \code{data.frame}
-#' @importFrom dplyr %>% filter select
+#' @importFrom dplyr %>% filter select if_else
 #' @export
 
 quiz_key.mdl_quiz_data = function(x, question.type = NULL,
@@ -136,10 +136,17 @@ quiz_key.mdl_quiz_data = function(x, question.type = NULL,
     stopifnot(all(question.type %in% names(x$distractors)))
 
   if (complete) {
-    keys = lapply(
+    keys_li = lapply(
       X = question.type, FUN = function(this_dist) {
         x$distractors[[this_dist]]$key})
-    return(do.call("rbind", keys))
+    keys_df = do.call("rbind", keys_li)
+    keys = keys_df %>%
+      mutate(
+        answer.text = if_else(
+          answer.correct == 1,
+          paste("*", answer.text, sep = ""),
+          answer.text))
+    return(keys)
   }
 
   keys = lapply(
