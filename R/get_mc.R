@@ -43,7 +43,7 @@ get_multichoice_one = function(conn, attempt.id, prefix = "mdl_",
     group_by(question.id) %>%
     mutate(answer.correct = as.numeric(answer.percent > 0),
            answer.num = answer.id - min(answer.id) + 1) %>%
-    select(question.id, answer.id, question.text, question.type,
+    select(question.id, answer.id, question.name, question.text, question.type,
            answer.text, answer.num, answer.correct) %>%
     ungroup()
 
@@ -122,11 +122,11 @@ get_multichoice_multiple = function(conn, quiz.id, attempt.id, prefix = "mdl_",
   key_tidy = key %>%
     mutate(question.id = paste(question.id, answer.id, sep = "/"),
            question.text = paste(question.text, answer.text, sep = ": "),
-           answer.num = if_else(answer.percent > 0, "1,0", "0,1"),
-           answer.correct = "1,0") %>%
+           answer.correct = if_else(answer.percent > 0, "1,0", "0,1"),
+           answer.num = "1,0") %>%
     separate_rows(answer.num, answer.correct, convert = TRUE) %>%
-    mutate(answer.text = if_else(answer.correct == 1, "True", "False")) %>%
-    select(question.id, question.text, question.type,
+    mutate(answer.text = if_else(answer.num == 1, "True", "False")) %>%
+    select(question.id, question.name, question.text, question.type,
            answer.text, answer.num, answer.correct)
 
   key_num = select(key_tidy, question.id, answer.num)

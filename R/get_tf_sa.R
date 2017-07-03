@@ -26,7 +26,7 @@ get_truefalse = function(conn, attempt.id, prefix = "mdl_",
   # Tidy key
   key_tidy = key %>%
     mutate(answer.num = rep(1:0, n()/2)) %>%
-    select(question.id, question.text, question.type,
+    select(question.id, question.name, question.text, question.type,
            answer.text, answer.num, answer.correct = answer.percent)
 
   key_expanded = expand_key(
@@ -84,7 +84,7 @@ get_shortanswer = function(conn, quiz.id, attempt.id, prefix = "mdl_",
            answer.correct = answer.num) %>%
     separate_rows(answer.num, answer.correct, convert = TRUE) %>%
     mutate(answer.text = if_else(answer.num == 1, "Correct", "Incorrect")) %>%
-    select(question.id, question.text, question.type,
+    select(question.id, question.name, question.text, question.type,
            answer.text, answer.num, answer.correct) %>%
     unique()
 
@@ -108,7 +108,7 @@ get_shortanswer = function(conn, quiz.id, attempt.id, prefix = "mdl_",
 
   ans_tidy = ans_finish %>%
     mutate(answer.num = as.numeric(answer.percent > 0)) %>%
-    select(attempt.id, question.id, answer.time, answer.num) %>%
+    select(attempt.id, question.id, answer.time, answer.num, answer.percent) %>%
     right_join(key_expanded, by = c("attempt.id", "question.id"))
 
   list(key = key_tidy, ans = ans_tidy)
