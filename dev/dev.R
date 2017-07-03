@@ -2,16 +2,17 @@
 # ============
 
 source("dev/conn.R")
-clist = get_courses(.con)
-mlist = get_course_modules(.con, 3)
-q = get_quiz(.con, 40)
+q = get_quiz(.con, 101)
 qd = get_module_data(q)
 
-qk = quiz_key(qd, question.type = "truefalse", complete = TRUE)
-qm = quiz_items(qd, question.type = "truefalse")
-qm = quiz_items(qd, question.type = "truefalse", marks = "binary")
-head(quiz_items(qd, marks = "nominal"), 8)
-head(quiz_scores(qd))
+sa = moodler:::get_question_ans(
+  conn = .con,
+  question.type = "shortanswer",
+  attempt.id = qd$attempts$attempt.id,
+  prefix = "mdl_")
+
+qk = quiz_key(qd, complete = TRUE)
+qi = quiz_items(qd)
 
 DBI::dbGetQuery(.con, 'SHOW VARIABLES WHERE Variable_Name LIKE "%dir"')
 
@@ -92,5 +93,5 @@ dat = get_module_data(vik, question.type = NULL)
 
 mdl = extract_items(dat, marks = "moodle")
 bin = extract_items(dat, marks = "binary")
-cat = extract_items(dat, marks = "categorical")
+cat = quiz_items(dat, question.type = "multichoice_one")
 key = extract_key(dat)
