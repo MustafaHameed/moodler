@@ -72,6 +72,7 @@ get_quiz = function(conn, quiz.id, attempt.state = "finished",
         module.id = quiz.id))
   }
 
+  #This houskeeping really bugs me, but how to do it functionally?
   settings$quiztimemodified = as.POSIXct(settings$quiztimemodified)
   attempts$attempt.start = as.POSIXct(attempts$attempt.start)
   attempts$attempt.finish = as.POSIXct(attempts$attempt.finish)
