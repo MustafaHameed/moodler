@@ -18,3 +18,24 @@ count_commas = function(x) {
     collapse = ","
   )
 }
+
+# Remove html tags
+untag = function(x, drop.newline = TRUE) {
+  if (class(x) != "character") stop("Input must be of class 'character'")
+  if (drop.newline == T) {
+    gsub(pattern = "<[^>]*>\n*", replacement = "", x)
+  } else {
+    x = gsub(pattern = "<[^>]*>", replacement = "", x)
+    gsub(pattern = "\n{2,}", replacement = "\n", x)
+  }
+}
+
+# Count individual words (space-based, no fancy removal of stopwords)
+word_count = function(x) {
+  if (class(x) != "character") stop("Input must be of class 'character'")
+  x.words = lapply(x, strsplit, split = " ")
+  x.count = rapply(x.words, length)
+  unlist(x.count)
+}
+
+
