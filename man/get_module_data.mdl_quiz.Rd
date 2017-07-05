@@ -24,5 +24,5 @@
 \item{...}{Further arguments passed on to methods}
 }
 \description{
-Fetch item data from quiz.
+Fetch item data from a quiz.
 }

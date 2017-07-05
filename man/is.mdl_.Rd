@@ -3,12 +3,18 @@
 \name{is.mdl_}
 \alias{is.mdl_}
 \alias{is.mdl_quiz}
+\alias{is.mdl_forum}
 \alias{is.mdl_quiz_data}
+\alias{is.mdl_forum_data}
 \title{Test mdl_ objects}
 \usage{
 is.mdl_quiz(x)
 
+is.mdl_forum(x)
+
 is.mdl_quiz_data(x)
+
+is.mdl_forum_data(x)
 }
 \arguments{
 \item{x}{Object to be tested}
