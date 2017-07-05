@@ -11,8 +11,18 @@ is.mdl_quiz = function(x)
 
 #' @export
 #' @rdname is.mdl_
+is.mdl_forum = function(x)
+  inherits(x, "mdl_forum")
+
+#' @export
+#' @rdname is.mdl_
 is.mdl_quiz_data = function(x)
   inherits(x, "mdl_quiz_data")
+
+#' @export
+#' @rdname is.mdl_
+is.mdl_forum_data = function(x)
+  inherits(x, "mdl_forum_data")
 
 #' Get module data
 #'
@@ -64,3 +74,29 @@ quiz_items = function(x, marks = "categorical", question.type = NULL,
 
 quiz_scores = function(x, marks = "binary")
   UseMethod("quiz_scores")
+
+#' Create a nodelist
+#'
+#' Create a nodelist.
+#' @param x An object of class \code{"mdl_forum_data"}
+#' @param prefix Defaults to \code{"mdl_"}
+#' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
+#' @param ... Further arguments passed on to methods
+#' @importFrom dplyr select group_by summarise %>%
+#' @export
+
+extract_nodes = function(x, ...)
+  UseMethod("extract_nodes")
+
+#' Create an edgelist
+#'
+#' Create an edgelist.
+#' @param x An object of class \code{"mdl_forum_data"}
+#' @param prefix Defaults to \code{"mdl_"}
+#' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
+#' @param ... Further arguments passed on to methods
+#' @importFrom dplyr select count
+#' @export
+
+extract_edges = function(x, ...)
+  UseMethod("extract_edges")
