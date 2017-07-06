@@ -10,10 +10,6 @@
 \item{x}{An object of class \code{"mdl_forum_data"}}
 
 \item{...}{Further arguments passed on to methods}
-
-\item{prefix}{Defaults to \code{"mdl_"}}
-
-\item{suppress.warnings}{Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}}
 }
 \description{
 Create an edgelist.

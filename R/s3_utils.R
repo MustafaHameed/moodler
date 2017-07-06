@@ -79,8 +79,6 @@ quiz_scores = function(x, marks = "binary")
 #'
 #' Create a nodelist.
 #' @param x An object of class \code{"mdl_forum_data"}
-#' @param prefix Defaults to \code{"mdl_"}
-#' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
 #' @param ... Further arguments passed on to methods
 #' @importFrom dplyr select group_by summarise %>%
 #' @export
@@ -92,8 +90,6 @@ extract_nodes = function(x, ...)
 #'
 #' Create an edgelist.
 #' @param x An object of class \code{"mdl_forum_data"}
-#' @param prefix Defaults to \code{"mdl_"}
-#' @param suppress.warnings Should warnings produced by \code{\link[DBI]{dbGetQuery}} be suppressed? Defaults to \code{TRUE}
 #' @param ... Further arguments passed on to methods
 #' @importFrom dplyr select count
 #' @export
